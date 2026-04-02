@@ -14,7 +14,9 @@ SECRET_KEY = 'django-insecure-7(it!c-!^5l6yywphj!ncw+r^j!2@rabc&_0gq(^yol3axct*_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app', 'https://*.netlify.app']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # 2. Application definition (Combined into one list)
 INSTALLED_APPS = [
