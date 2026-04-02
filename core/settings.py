@@ -106,7 +106,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 if os.getenv('CLOUDINARY_URL'):
     INSTALLED_APPS.insert(0, 'cloudinary_storage')
     INSTALLED_APPS.insert(0, 'cloudinary')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
 
 # 6. Authentication Redirects
 LOGIN_REDIRECT_URL = 'home'
