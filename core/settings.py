@@ -99,9 +99,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # 5. Media files (Uploaded images and PDFs)
-# Defined once at the bottom using the Path method you requested
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Cloudinary Storage Configuration
+if os.getenv('CLOUDINARY_URL'):
+    INSTALLED_APPS.insert(0, 'cloudinary_storage')
+    INSTALLED_APPS.insert(0, 'cloudinary')
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # 6. Authentication Redirects
 LOGIN_REDIRECT_URL = 'home'
