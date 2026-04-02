@@ -11,5 +11,8 @@ __pycache__/
 db.sqlite3
 
 # Media 
-# (You usually don't want to upload user files to github)
-media/
+media/*
+!media/DNA.mp4
+!media/W-DNA.mp4
+!media/background.jpg
+!media/default.jpg
