@@ -22,10 +22,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+import re
+
 # 2. Function to determine the folder structure for uploaded PDFs
 def get_upload_path(instance, filename):
-    # Organizes files like: media/Semester_4/DBMS/chapter1.pdf
-    return f'Semester_{instance.subject.semester.number}/{instance.subject.name}/{filename}'
+    # Sanitize subject name to prevent Cloudinary Invalid Signature errors with quotes/spaces
+    safe_subject_name = re.sub(r'[^A-Za-z0-9_\-\.]', '_', instance.subject.name)
+    # Organizes files like: Semester_4/OOP_S/chapter1.pdf
+    return f'Semester_{instance.subject.semester.number}/{safe_subject_name}/{filename}'
 
 # 3. Year Model
 class Year(models.Model):
