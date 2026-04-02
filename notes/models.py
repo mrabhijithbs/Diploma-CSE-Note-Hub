@@ -10,6 +10,13 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+    @property
+    def get_avatar_url(self):
+        url = self.image.url
+        if 'default.jpg' in url and 'raw/upload' in url:
+            return url.replace('raw/upload', 'image/upload')
+        return url
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
