@@ -599,8 +599,15 @@
                         <!-- Profile & Logout Block -->
                         <div class="d-flex align-items-center justify-content-between">
                             <a href="{% url 'profile' %}" class="text-decoration-none d-flex align-items-center profile-link">
-                                <img src="{{ user.profile.get_avatar_url }}" class="rounded-circle shadow-sm me-2"
-                                    style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4);" alt="Profile">
+                                {% if 'default.jpg' in user.profile.get_avatar_url %}
+                                    <div class="rounded-circle shadow-sm me-2 d-flex align-items-center justify-content-center text-white" 
+                                         style="width: 42px; height: 42px; background-color: #000; border: 2px solid rgba(255,255,255,0.4);">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                {% else %}
+                                    <img src="{{ user.profile.get_avatar_url }}" class="rounded-circle shadow-sm me-2"
+                                        style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4);" alt="Profile">
+                                {% endif %}
                                 <span class="text-dark fw-bold">{{ user.username }}</span>
                             </a>
 

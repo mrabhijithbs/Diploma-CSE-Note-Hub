@@ -5,8 +5,17 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-lg p-4" style="border-radius: 30px;">
                 <div class="text-center mb-4">
-                    <img src="{{ user.profile.get_avatar_url }}" id="profilePreview" class="rounded-circle border shadow-sm"
-                        style="width: 120px; height: 120px; object-fit: cover;">
+                    {% if 'default.jpg' in user.profile.get_avatar_url %}
+                        <div id="profilePreviewFallback" class="rounded-circle border shadow-sm mx-auto d-flex align-items-center justify-content-center text-white"
+                             style="width: 120px; height: 120px; background-color: #000; font-size: 3.5rem;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <img src="" id="profilePreview" class="rounded-circle border shadow-sm d-none"
+                             style="width: 120px; height: 120px; object-fit: cover;">
+                    {% else %}
+                        <img src="{{ user.profile.get_avatar_url }}" id="profilePreview" class="rounded-circle border shadow-sm"
+                            style="width: 120px; height: 120px; object-fit: cover;">
+                    {% endif %}
                     <h3 class="fw-bold mt-3">{{ user.username }}</h3>
                 </div>
 
@@ -120,6 +129,9 @@
                 // Update preview on the page
                 const croppedUrl = URL.createObjectURL(blob);
                 profilePreview.src = croppedUrl;
+                profilePreview.classList.remove('d-none');
+                const fallback = document.getElementById('profilePreviewFallback');
+                if (fallback) fallback.classList.add('d-none');
 
                 // Use DataTransfer to replace the file input's selected file
                 const myFile = new File([blob], "profile_cropped.jpg", {
