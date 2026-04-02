@@ -2,10 +2,14 @@
   "builds": [
     {
       "src": "core/wsgi.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }
   ],
-  "scripts": {
-    "build": "python3 manage.py migrate && python3 manage.py collectstatic --noinput"
-  }
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "core/wsgi.py"
+    }
+  ]
 }
