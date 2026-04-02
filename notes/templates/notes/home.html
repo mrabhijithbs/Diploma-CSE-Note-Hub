@@ -1,0 +1,205 @@
+{% extends "notes/base.html" %}
+
+{% block title %}Home - DiplomaNote Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="text-center py-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-extrabold text-dark mb-3 reveal">DCSE notes HUB</h1>
+                <p class="lead text-muted mb-4 reveal reveal-delay-1">Your Gateway to Academic Excellence at MGCE. Designed
+                    specifically for
+                    the CSE department to streamline learning and provide every student with the resources they need
+                    to
+                    succeed in their polytechnic journey.</p>
+
+                <form action="{% url 'search' %}" method="get"
+                    class="rounded-pill p-2 d-flex search-glass-container reveal reveal-delay-2">
+                    <input type="text" name="q" class="form-control border-0 shadow-none ps-4"
+                        placeholder="Search for subjects, topics, or modules...">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 mx-1">
+                        <i class="bi bi-search me-2"></i> Search
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-5">
+
+        <div class="col-12 reveal">
+            <div class="d-flex align-items-center mb-4">
+                <hr class="flex-grow-1">
+                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
+                    <h3>First Year</h3>
+                </span>
+                <hr class="flex-grow-1">
+            </div>
+            <div class="row g-4">
+                {% for sem in "12"|make_list %}
+                <div class="col-md-6 reveal reveal-delay-1">
+                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
+                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
+                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <p class="text-muted small mb-0">View all 1st Year subjects</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-12 reveal">
+            <div class="d-flex align-items-center mb-4">
+                <hr class="flex-grow-1">
+                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
+                    <h3>Second Year</h3>
+                </span>
+                <hr class="flex-grow-1">
+            </div>
+            <div class="row g-4">
+                {% for sem in "34"|make_list %}
+                <div class="col-md-6 reveal reveal-delay-1">
+                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
+                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
+                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <p class="text-muted small mb-0">View core technical subjects</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-12 reveal">
+            <div class="d-flex align-items-center mb-4">
+                <hr class="flex-grow-1">
+                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
+                    <h3>Third Year</h3>
+                </span>
+                <hr class="flex-grow-1">
+            </div>
+            <div class="row g-4">
+                {% for sem in "56"|make_list %}
+                <div class="col-md-6 reveal reveal-delay-1">
+                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
+                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
+                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <p class="text-muted small mb-0">Advanced modules & project resources</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .fw-black {
+        font-weight: 900;
+    }
+
+    .sem-card {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        background-color: #ffffff;
+    }
+
+    .sem-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
+        background-color: #f8fbff;
+    }
+
+    .tracking-wider {
+        letter-spacing: 0.1em;
+    }
+
+    .col-lg-8 h1,
+    .col-lg-8 p {
+        color: #ffffff !important;
+        /* Forces the color to white */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        /* Optional: makes text "pop" against backgrounds */
+    }
+
+    /* If you want the DCSE title even bigger */
+    .col-lg-8 h1 {
+        font-weight: 800;
+        font-size: 3.5rem;
+    }
+
+    /* SEARCH BAR INTERACTIVE ANIMATION */
+    .search-glass-container {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.15) !important;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-glass-container:focus-within {
+        transform: scale(1.04) translateY(-3px);
+        border-color: #38bdf8 !important; /* Electric Cyan */
+        box-shadow: 0 20px 40px rgba(56, 189, 248, 0.3), inset 0 0 15px rgba(56, 189, 248, 0.2) !important;
+        background-color: rgba(15, 23, 42, 0.85) !important;
+    }
+
+    .search-glass-container input {
+        background: transparent !important;
+        color: #f8fafc !important;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+    
+    .search-glass-container input::placeholder {
+        color: #94a3b8 !important;
+        transition: color 0.3s ease;
+    }
+
+    .search-glass-container:focus-within input::placeholder {
+        color: #cbd5e1 !important; /* Brightens placeholder on focus */
+    }
+
+    .search-glass-container:focus-within .btn-primary {
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+    }
+
+    /* LIGHT MODE EXTENSIONS FOR HOME PAGE */
+    body.light-mode .col-lg-8 h1,
+    body.light-mode .col-lg-8 p {
+        color: #000000 !important;
+        text-shadow: none !important; /* Removed white shadow. Relies on pure black contrast. */
+    }
+
+    body.light-mode .search-glass-container {
+        background-color: rgba(255, 255, 255, 0.7) !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light-mode .search-glass-container:focus-within {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-color: #0284c7 !important; /* Deep bright cyan for light glass */
+    }
+
+    body.light-mode .search-glass-container input {
+        color: #0f172a !important;
+    }
+
+    body.light-mode .search-glass-container input::placeholder {
+        color: #64748b !important;
+    }
+
+    body.light-mode .search-glass-container:focus-within input::placeholder {
+        color: #94a3b8 !important;
+    }
+</style>
+{% endblock %}

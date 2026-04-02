@@ -1,0 +1,85 @@
+{% extends "notes/base.html" %}
+
+{% block content %}
+<section class="d-flex align-items-center min-vh-75">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+
+                <div class="card border-0 shadow-lg p-4" style="border-radius: 20px;">
+                    <div class="card-body">
+
+                        <div class="text-center mb-4">
+                            <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
+                            <h2 class="fw-bold mt-2">Welcome Back</h2>
+                            <p class="text-muted small">Login to access your notes</p>
+                        </div>
+
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger p-2 small">
+                                {{ form.non_field_errors|striptags }}
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label for="{{ form.username.id_for_label }}"
+                                    class="form-label small fw-medium">Username</label>
+                                <input type="text" name="username"
+                                    class="form-control form-control-lg bg-light border-0 shadow-none"
+                                    placeholder="Enter username" required id="id_username"
+                                    style="border-radius: 12px; font-size: 0.95rem;">
+                                <div class="text-danger small">{{ form.username.errors }}</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.password.id_for_label }}"
+                                    class="form-label small fw-medium">Password</label>
+                                <input type="password" name="password"
+                                    class="form-control form-control-lg bg-light border-0 shadow-none"
+                                    placeholder="••••••••" required id="id_password"
+                                    style="border-radius: 12px; font-size: 0.95rem;">
+                                <div class="text-danger small">{{ form.password.errors }}</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm border-0"
+                                style="border-radius: 12px; font-weight: 600; background: linear-gradient(45deg, #0d6efd, #0dcaf0);">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p class="small text-muted">Don't have an account? <a href="#"
+                                    class="text-decoration-none fw-bold">Contact HOD</a></p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Centers the card vertically on the screen */
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+
+    /* Smooth transition for the input fields */
+    .form-control:focus {
+        background-color: #fff !important;
+        border: 1px solid #0d6efd !important;
+        transition: 0.3s;
+    }
+
+    /* Matching your existing "btn-apple" style if needed */
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        transition: all 0.2s ease;
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2) !important;
+    }
+</style>
+{% endblock %}

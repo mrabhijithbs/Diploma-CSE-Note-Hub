@@ -1,0 +1,87 @@
+{% extends "notes/base.html" %}
+
+{% block title %}{{ subject.name }} - Study Materials | DiplomaNote Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-white p-3 rounded shadow-sm border">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none"><i
+                        class="bi bi-house-door"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'subject_list' subject.semester.number %}"
+                    class="text-decoration-none">Semester {{ subject.semester.number }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ subject.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-0">{{ subject.name }}</h1>
+            <p class="text-muted">Downloadable PDFs and resources for your exams</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-light text-dark border p-2">{{ notes.count }} Files Available</span>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for note in notes %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm border-0 note-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-danger-subtle text-danger rounded p-2 me-3">
+                                <i class="bi bi-file-earmark-pdf-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title fw-bold mb-0 text-truncate">{{ note.title }}</h5>
+                                <small class="text-muted d-block mt-1">
+                                    <i class="bi bi-hdd me-1"></i> {{ note.get_file_size }} |
+                                    <i class="bi bi-calendar3 me-1"></i> {{ note.uploaded_at|date:"d M Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ note.file.url }}" class="btn btn-primary" target="_blank">
+                            <i class="bi bi-eye-fill me-2"></i> View / Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="mb-3">
+                <i class="bi bi-cloud-upload display-1 text-muted opacity-25"></i>
+            </div>
+            <h4 class="text-muted">No notes uploaded for this subject yet.</h4>
+            <p class="text-muted small">Check back later or contact your class leader.</p>
+            <a href="{% url 'subject_list' subject.semester.number %}" class="btn btn-outline-secondary mt-3">
+                <i class="bi bi-arrow-left"></i> Back to Subjects
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Add subtle border to cards */
+    .note-card {
+        border: 1px solid rgba(255, 255, 255, 0.1) !important; 
+    }
+
+    .bg-danger-subtle {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.2) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);
+        color: #fca5a5 !important; /* Soft rose text for the icon */
+    }
+    
+    .text-danger {
+        color: #fca5a5 !important;
+    }
+</style>
+{% endblock %}

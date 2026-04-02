@@ -1,0 +1,761 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}DiplomaNote Hub - MGCE{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'notes/main.css' %}">
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* VIDEO BACKGROUND */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Puts it behind everything */
+            overflow: hidden;
+            background-color: #000;
+            /* Black background while video loads */
+        }
+
+        .video-bg {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.4);
+            /* Darkens video for readability */
+        }
+
+        /* LAYOUT OVERLAY / GLASSMORPHISM THEME */
+        main {
+            flex: 1 0 auto;
+            background: transparent !important;
+            padding: 60px 0;
+            color: #f8f9fa;
+        }
+
+        /* PREMIUM GLASS NAVBAR */
+        .navbar {
+            background-color: rgba(15, 23, 42, 0.7) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar .text-dark,
+        .navbar .btn-link {
+            color: #e2e8f0 !important;
+        }
+
+        .mobile-menu-icon {
+            color: #f8fafc !important;
+        }
+
+        body.light-mode .mobile-menu-icon {
+            color: #0f172a !important;
+        }
+
+        /* PREMIUM GLASS FOOTER */
+        footer {
+            background-color: rgba(15, 23, 42, 0.7) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            color: #94a3b8 !important;
+        }
+
+        /* BUTTONS STYLING */
+        .btn-apple {
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-apple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            border: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            border: none;
+        }
+
+        .btn-outline-dark {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #e2e8f0;
+        }
+
+        .btn-outline-dark:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* PREMIUM AUTH BUTTONS */
+        .btn-premium-logout {
+            background: rgba(225, 29, 72, 0.1) !important;
+            border: 1px solid rgba(225, 29, 72, 0.4) !important;
+            color: #fda4af !important;
+            /* Soft rose */
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-logout:hover {
+            background: rgba(225, 29, 72, 0.25) !important;
+            border-color: rgba(225, 29, 72, 0.8) !important;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+            color: #ffffff !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-premium-signin {
+            background: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #e2e8f0 !important;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-signin:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.6) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-premium-signup {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
+            color: #0f172a !important;
+            /* Dark slate text for high contrast */
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-signup:hover {
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.6);
+            transform: translateY(-2px);
+            color: #000000 !important;
+        }
+
+        /* GLOBAL TEXT OVERRIDES FOR PREMIUM DARK THEME */
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        .text-dark {
+            color: #f8fafc !important;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #ffffff !important;
+        }
+
+        /* PREMIUM DARK GLASS CARDS & BREADCRUMBS */
+        .card,
+        .bg-white,
+        .breadcrumb,
+        .list-group-item {
+            background-color: rgba(15, 23, 42, 0.85) !important;
+            /* Increased opacity heavily to improve text contrast */
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #f8fafc !important;
+            /* Brighter Platinum for better readability */
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.8);
+            /* Very firm, high-contrast anchor shadow */
+        }
+
+        /* NEAT & CLEAR PREMIUM VIBE TEXT / NUMBERS INSIDE CARDS */
+        .card .text-muted,
+        .card small {
+            color: #38bdf8 !important;
+            /* Electric luxury cyan for numbers and dates */
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            /* Removed glow text-shadow as it causes blurriness on small text */
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.15) !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
+            color: #38bdf8 !important;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            border-radius: 16px;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                border-radius 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.6s ease,
+                border-color 0.6s ease !important;
+            overflow: hidden;
+            /* For the liquid sweep */
+        }
+
+        /* LIQUID GLASS SWEEP EFFECT */
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            /* Smooth elegant lift without twisting geometry */
+            border-radius: 16px;
+            /* Retain clean native corners */
+            box-shadow: 0 15px 35px rgba(14, 165, 233, 0.15),
+                0 5px 15px rgba(59, 130, 246, 0.25),
+                inset 0 0 15px rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(14, 165, 233, 0.5) !important;
+            z-index: 2;
+        }
+
+        .card:hover::after {
+            left: 150%;
+        }
+
+        /* 3D LETTERS / TYPOGRAPHY POP EFFECT */
+        .card h1,
+        .card h2,
+        .card h3,
+        .card h4,
+        .card h5,
+        .card h6,
+        .card p,
+        .card small,
+        .card span,
+        .card i,
+        .card label {
+            transition: text-shadow 0.4s ease;
+        }
+
+        .card:hover h1,
+        .card:hover h2,
+        .card:hover h3,
+        .card:hover h4,
+        .card:hover h5,
+        .card:hover h6,
+        .card:hover p,
+        .card:hover small,
+        .card:hover span,
+        .card:hover i,
+        .card:hover label {
+            /* Intense high-contrast dark 3D extrusion directly into true black */
+            text-shadow:
+                -1px 1px 0px #0f172a,
+                -2px 2px 0px #020617,
+                -3px 3px 0px #000000,
+                -4px 4px 6px rgba(0, 0, 0, 0.9) !important;
+        }
+
+        /* SCROLL REVEAL ANIMATIONS */
+        .reveal {
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: opacity, transform, filter;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            filter: none !important;
+            /* Using none instead of blur(0px) to prevent subpixel antialiasing blur bugs */
+            -webkit-filter: none !important;
+            transform: translateY(0) scale(1);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* =========================================
+           LIGHT MODE (BRIGHT MODE) OVERRIDES
+           ========================================= */
+        body.light-mode .card,
+        body.light-mode .bg-white,
+        body.light-mode .card,
+        body.light-mode .bg-white,
+        body.light-mode .breadcrumb,
+        body.light-mode .list-group-item {
+            background-color: rgba(255, 255, 255, 0.7) !important;
+            border: 1px solid rgba(255, 255, 255, 0.9) !important;
+            color: #0f172a !important;
+            text-shadow: none !important;
+            /* Premium Glass Shadow: Deep indigo tint drop + Inner white bevel reflection */
+            box-shadow:
+                0 15px 35px rgba(31, 38, 135, 0.08),
+                0 5px 15px rgba(0, 0, 0, 0.04),
+                inset 0 2px 4px rgba(255, 255, 255, 1) !important;
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+        }
+
+        /* Brighten the background video explicitly in light mode */
+        body.light-mode .video-bg {
+            filter: brightness(1.2) contrast(1.05);
+            /* Increases brightness of the page natively */
+        }
+
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode h4,
+        body.light-mode h5,
+        body.light-mode h6,
+        body.light-mode .navbar-brand {
+            color: #000000 !important;
+            /* True black heading for maximum POP */
+        }
+
+        body.light-mode .navbar {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(25px) !important;
+            -webkit-backdrop-filter: blur(25px) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
+        }
+
+        body.light-mode .navbar .text-dark,
+        body.light-mode .navbar .btn-link,
+        body.light-mode .text-dark {
+            color: #000000 !important;
+        }
+
+        body.light-mode .card .text-muted,
+        body.light-mode .card small,
+        body.light-mode .badge {
+            color: #0284c7 !important;
+            /* Deeper Cyan/Blue for high contrast on white */
+            font-weight: 700;
+        }
+
+        body.light-mode .badge {
+            background: rgba(2, 132, 199, 0.1) !important;
+            border-color: rgba(2, 132, 199, 0.2) !important;
+        }
+
+        body.light-mode .card:hover h1,
+        body.light-mode .card:hover h2,
+        body.light-mode .card:hover h3,
+        body.light-mode .card:hover h4,
+        body.light-mode .card:hover h5,
+        body.light-mode .card:hover h6,
+        body.light-mode .card:hover p,
+        body.light-mode .card:hover small,
+        body.light-mode .card:hover span,
+        body.light-mode .card:hover i,
+        body.light-mode .card:hover label {
+            /* Elegant premium soft shadow instead of harsh 3D block extrusion */
+            text-shadow: 0 4px 15px rgba(15, 23, 42, 0.25) !important;
+            transition: text-shadow 0.3s ease;
+        }
+
+        body.light-mode .card:hover {
+            /* Illuminated Glass Shadow on Hover */
+            box-shadow:
+                0 25px 50px rgba(2, 132, 199, 0.15),
+                0 10px 20px rgba(0, 0, 0, 0.06),
+                inset 0 2px 4px rgba(255, 255, 255, 1) !important;
+            border-color: rgba(255, 255, 255, 1) !important;
+        }
+
+        body.light-mode footer {
+            background-color: rgba(248, 250, 252, 0.8) !important;
+            color: #475569 !important;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .btn-outline-dark {
+            border-color: rgba(0, 0, 0, 0.2);
+            color: #0f172a;
+        }
+
+        body.light-mode .btn-outline-dark:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Light mode for Auth buttons */
+        body.light-mode .btn-premium-signin {
+            color: #0f172a !important;
+            border-color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body.light-mode .btn-premium-signin:hover {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border-color: rgba(0, 0, 0, 0.6) !important;
+        }
+
+        /* Nav icon colors */
+        body.light-mode .navbar-brand i {
+            color: #0284c7 !important;
+        }
+
+        /* Light Mode Liquid Glass Buttons */
+        body.light-mode .btn-glass-liquid {
+            background: rgba(255, 255, 255, 0.6);
+            color: #0f172a;
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .btn-glass-liquid:hover {
+            color: #000000 !important;
+            /* Strict dark text for max legibility */
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+            border-color: rgba(2, 132, 199, 0.5) !important;
+        }
+
+        body.light-mode .btn-glass-liquid::before {
+            background: radial-gradient(circle, rgba(2, 132, 199, 0.35) 0%, transparent 70%);
+            mix-blend-mode: normal;
+            /* Removes weird color distortion */
+        }
+
+        /* GLASS LIQUID BUTTONS SYSTEM (FOOTER) - MOUSE TRACKING DROPLET */
+        .btn-glass-liquid {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.75rem;
+            color: #f8fafc;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-glass-liquid::before {
+            content: '';
+            position: absolute;
+            top: var(--y, 50%);
+            left: var(--x, 50%);
+            transform: translate(-50%, -50%);
+            width: 0px;
+            /* Swells out when hovered */
+            height: 0px;
+            /* Swells out when hovered */
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.7) 0%, transparent 70%);
+            opacity: 0;
+            transition: width 0.4s ease, height 0.4s ease, opacity 0.3s ease;
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .btn-glass-liquid:hover {
+            color: #ffffff !important;
+            border-color: rgba(56, 189, 248, 0.4) !important;
+            box-shadow: 0 5px 20px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-glass-liquid:hover::before {
+            opacity: 1;
+            width: 150px;
+            height: 150px;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <div class="video-bg-container">
+        <video autoplay muted loop playsinline class="video-bg">
+            <source src="/media/DNA.mp4" type="video/mp4" id="bgVideoSource">
+            <img src="/media/background.jpg" alt="Background Fallback">
+        </video>
+    </div>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'home' %}">
+                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                DiplomaNote Hub
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none px-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="bi bi-list mobile-menu-icon" style="font-size: 2.2rem;"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Push actions to the right -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+
+                <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-3 mt-4 mt-lg-0 pb-3 pb-lg-0">
+                    <!-- THEME TOGGLE BUTTON -->
+                    <div class="d-flex justify-content-start justify-content-lg-center">
+                        <button class="btn btn-outline-dark btn-sm bg-white bg-opacity-10 rounded-circle shadow-sm"
+                            id="themeToggle" type="button"
+                            style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                            <i class="bi bi-moon-fill" id="themeIcon"></i>
+                        </button>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-dark px-3 py-2 m-0 text-decoration-none fw-medium text-center" style="border-radius: 8px;">
+                            <i class="bi bi-speedometer2 me-1"></i> Admin
+                        </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'ask_ai' %}" class="btn btn-premium-signup px-4 py-2 m-0 text-decoration-none d-flex justify-content-center align-items-center">
+                            <i class="bi bi-robot me-2"></i> Ask AI
+                        </a>
+
+                        <!-- Vertical Divider for Desktop -->
+                        <div class="d-none d-lg-block mx-1" style="width: 1px; height: 32px; background-color: rgba(255, 255, 255, 0.2);"></div>
+                        <!-- Horizontal Divider for Mobile -->
+                        <hr class="d-lg-none w-100 my-1 text-white opacity-25">
+
+                        <!-- Profile & Logout Block -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <a href="{% url 'profile' %}" class="text-decoration-none d-flex align-items-center profile-link">
+                                <img src="{{ user.profile.image.url }}" class="rounded-circle shadow-sm me-2"
+                                    style="width: 42px; height: 42px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4);" alt="Profile">
+                                <span class="text-dark fw-bold">{{ user.username }}</span>
+                            </a>
+
+                            <form action="{% url 'logout' %}" method="post" class="m-0 ms-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-premium-logout px-3 py-2 d-flex align-items-center justify-content-center w-100" title="Logout">
+                                    <i class="bi bi-box-arrow-right d-lg-none m-0"></i>
+                                    <span class="d-none d-lg-inline">Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <!-- Vertical Divider for Desktop -->
+                        <div class="d-none d-lg-block mx-1" style="width: 1px; height: 32px; background-color: rgba(255, 255, 255, 0.2);"></div>
+                        <!-- Horizontal Divider for Mobile -->
+                        <hr class="d-lg-none w-100 my-1 text-white opacity-25">
+
+                        <a href="{% url 'login' %}" class="btn btn-premium-signin px-4 py-2 m-0 text-decoration-none text-center">Sign In</a>
+                        <a href="{% url 'signup' %}" class="btn btn-premium-signup px-5 py-2 m-0 text-decoration-none text-center">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-section">
+        {% if messages %}
+        <div class="container mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <footer class="py-5 mt-auto">
+        <div class="container text-center">
+
+            <!-- Quick Links with Liquid Glass Animation -->
+            <div class="d-flex justify-content-center flex-wrap gap-3 mb-5">
+                <a href="https://www.mgcet.com/" target="_blank" class="btn-glass-liquid">
+                    <i class="bi bi-bank me-2"></i> MGCET Official
+                </a>
+                <a href="https://www.sbte.kerala.gov.in/login" target="_blank" class="btn-glass-liquid">
+                    <i class="bi bi-person-fill-lock me-2"></i> SBTE Login
+                </a>
+                <a href="https://sitttrkerala.ac.in/index.php?r=site%2Fdiploma-syllabus-courses&prog=CS" target="_blank"
+                    class="btn-glass-liquid">
+                    <i class="bi bi-journal-bookmark-fill me-2"></i> Diploma Syllabus
+                </a>
+            </div>
+
+            <h5 class="fw-bold mb-3">MGCE CSE Department</h5>
+            <p class="mb-1 text-secondary">&copy; 2026 MGCE Polytechnic CSE.</p>
+            <div class="mt-2 mb-4">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                <small class="text-secondary">Streamlining your polytechnic journey.</small>
+            </div>
+
+            <!-- Developer Credit -->
+            <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <small class="text-secondary d-flex align-items-center justify-content-center gap-2">
+                    <span>Designed & Developed by</span>
+                    <a href="https://github.com/CodeSmithAbhi" target="_blank"
+                        class="text-decoration-none fw-bold text-primary developer-link"
+                        style="transition: all 0.3s ease;">
+                        Abhijith B S , Adil S, Muhammad Arfan
+                    </a>
+                </small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // THEME TOGGLE SCRIPT (DNA / W-DNA)
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const videoBg = document.getElementById('bgVideoSource');
+            const videoElement = document.querySelector('.video-bg');
+
+            // Apply theme on load based on localStorage
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+                videoBg.src = '/media/W-DNA.mp4';
+                videoElement.load();
+            }
+
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                if (document.body.classList.contains('light-mode')) {
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+                    videoBg.src = '/media/W-DNA.mp4';
+                    videoElement.load();
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+                    videoBg.src = '/media/DNA.mp4';
+                    videoElement.load();
+                }
+            });
+        });
+
+        // SCROLL REVEAL SCRIPT
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+
+            // WATER DROPLET BUTTON MOUSE TRACKING
+            document.querySelectorAll('.btn-glass-liquid').forEach(btn => {
+                btn.addEventListener('mousemove', e => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    btn.style.setProperty('--x', `${x}px`);
+                    btn.style.setProperty('--y', `${y}px`);
+                });
+
+                // Optional: Recenter droplet when mouse leaves to avoid sticky position on next hover
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.setProperty('--x', `50%`);
+                    btn.style.setProperty('--y', `50%`);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

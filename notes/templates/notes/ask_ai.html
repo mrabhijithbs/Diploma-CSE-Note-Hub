@@ -1,0 +1,167 @@
+{% extends 'notes/base.html' %}
+
+{% block title %}Ask AI - DiplomaNote Hub{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center reveal">
+    <div class="col-md-8 col-lg-6">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold"><i class="bi bi-robot text-primary me-2"></i>AI Doubt Solver ✨</h2>
+            <p class="text-muted">Ask anything about your courses, and get instant answers from our AI assistant!</p>
+        </div>
+
+        <div class="card p-4 shadow-lg" style="height: 60vh; display: flex; flex-direction: column;">
+            
+            <!-- Chat History Area -->
+            <div id="chat-history" class="flex-grow-1 overflow-auto mb-3 pe-2" style="scrollbar-width: thin;">
+                <!-- Initial Welcome Message -->
+                <div class="d-flex mb-3">
+                    <div class="bg-primary bg-opacity-25 rounded p-3 text-dark border border-primary border-opacity-25" style="max-width: 85%;">
+                        <strong><i class="bi bi-stars"></i> AI Assistant</strong><br>
+                        Hello {{ user.username }}! How can I help you with your studies today? Let me simplify those complex topics for you!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="mt-auto position-relative">
+                <form id="chat-form" class="d-flex align-items-center">
+                    <input type="text" id="chat-input" class="form-control rounded-pill bg-transparent text-white border-secondary px-4 py-3 shadow-none focus-ring focus-ring-primary" placeholder="Type your doubt here..." required autocomplete="off">
+                    <button type="submit" class="btn btn-primary rounded-circle ms-2 shadow" style="width: 50px; height: 50px; flex-shrink: 0;">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </form>
+            </div>
+            <!-- Loading Indicator (Hidden by default) -->
+            <div id="loading-indicator" class="text-center mt-2 d-none">
+                <small class="text-muted"><i class="bi bi-hourglass-split"></i> AI is thinking...</small>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+/* For light mode adjustments locally to this page if needed */
+body.light-mode #chat-input {
+    color: #0f172a !important;
+    border-color: rgba(0,0,0,0.2) !important;
+}
+body.light-mode #chat-input::placeholder {
+    color: #64748b !important;
+}
+#chat-input:focus {
+    border-color: #3b82f6 !important;
+}
+.user-msg {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+}
+body.light-mode .user-msg {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+.ai-msg {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+}
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+        const chatHistory = document.getElementById("chat-history");
+        const loadingIndicator = document.getElementById("loading-indicator");
+
+        // Format Markdown basic (bold and paragraphs)
+        function formatMarkdown(text) {
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            text = text.replace(/\n\n/g, '<br><br>');
+            text = text.replace(/\n/g, '<br>');
+            return text;
+        }
+
+        function appendMessage(sender, text, isUser) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `d-flex mb-3 ${isUser ? 'justify-content-end' : ''}`;
+            
+            const bubbleDiv = document.createElement("div");
+            bubbleDiv.className = `p-3 text-dark ${isUser ? 'user-msg' : 'ai-msg'}`;
+            bubbleDiv.style.maxWidth = "85%";
+            
+            const header = document.createElement("strong");
+            header.innerHTML = isUser ? `<i class="bi bi-person-circle"></i> You` : `<i class="bi bi-stars"></i> ${sender}`;
+            
+            const content = document.createElement("div");
+            content.style.marginTop = "5px";
+            content.innerHTML = isUser ? text : formatMarkdown(text);
+            
+            bubbleDiv.appendChild(header);
+            bubbleDiv.appendChild(content);
+            msgDiv.appendChild(bubbleDiv);
+            
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        chatForm.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const prompt = chatInput.value.trim();
+            if(!prompt) return;
+
+            // Show user message
+            appendMessage("You", prompt, true);
+            chatInput.value = "";
+            
+            // Show loading
+            loadingIndicator.classList.remove("d-none");
+
+            try {
+                // Get CSRF Token from cookies
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                const csrftoken = getCookie('csrftoken');
+
+                const response = await fetch("/api/ask-ai/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrftoken
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+                
+                loadingIndicator.classList.add("d-none");
+
+                if(response.ok) {
+                    appendMessage("AI Assistant", data.response, false);
+                } else {
+                    appendMessage("Error", "Sorry, I could not process your request. " + (data.error || ""), false);
+                }
+            } catch (error) {
+                loadingIndicator.classList.add("d-none");
+                appendMessage("Error", "Network error. Please try again later.", false);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "notes/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg p-4" style="border-radius: 30px;">
+                <div class="text-center mb-4">
+                    <img src="{{ user.profile.image.url }}" id="profilePreview" class="rounded-circle border shadow-sm"
+                        style="width: 120px; height: 120px; object-fit: cover;">
+                    <h3 class="fw-bold mt-3">{{ user.username }}</h3>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="small fw-bold">Username</label>
+                        {{ u_form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Email</label>
+                        {{ u_form.email }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="small fw-bold">Change Profile Picture</label>
+                        {{ p_form.image }}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 rounded-pill py-2">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cropper.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<!-- Cropper.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<!-- Crop Modal -->
+<div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content text-dark" style="background-color: #f8f9fa;">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold" id="cropModalLabel">Crop Profile Picture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 text-center bg-dark">
+                <div class="img-container">
+                    <img id="imageToCrop" src=""
+                        style="max-width: 100%; max-height: 60vh; display: block; margin: 0 auto;">
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                    data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" id="cropBtn">Crop & Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the file input. Django's ModelForm for image generates an <input type="file" name="image" ...>
+        const fileInput = document.querySelector('input[type="file"][name="image"]');
+        if (!fileInput) return; // safety check
+
+        const cropModalElement = document.getElementById('cropModal');
+        const imageToCrop = document.getElementById('imageToCrop');
+        const cropBtn = document.getElementById('cropBtn');
+        const profilePreview = document.getElementById('profilePreview');
+
+        let cropper;
+
+        // Bootstrap modal instance
+        const cropModal = new bootstrap.Modal(cropModalElement);
+
+        fileInput.addEventListener('change', function (e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+
+                // Only process image files
+                if (!file.type.startsWith('image/')) return;
+
+                const url = URL.createObjectURL(file);
+                imageToCrop.src = url;
+
+                cropModal.show();
+            }
+        });
+
+        cropModalElement.addEventListener('shown.bs.modal', function () {
+            cropper = new Cropper(imageToCrop, {
+                aspectRatio: 1, // 1:1 square ratio
+                viewMode: 1,    // Restrict crop box
+                autoCropArea: 0.8,
+                background: false, // Don't show cropper background grid
+            });
+        });
+
+        cropModalElement.addEventListener('hidden.bs.modal', function () {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            imageToCrop.src = "";
+        });
+
+        cropBtn.addEventListener('click', function () {
+            if (!cropper) return;
+
+            const canvas = cropper.getCroppedCanvas({
+                width: 500,  // Good size for profile pictures
+                height: 500
+            });
+
+            canvas.toBlob(function (blob) {
+                // Update preview on the page
+                const croppedUrl = URL.createObjectURL(blob);
+                profilePreview.src = croppedUrl;
+
+                // Use DataTransfer to replace the file input's selected file
+                const myFile = new File([blob], "profile_cropped.jpg", {
+                    type: "image/jpeg",
+                    lastModified: new Date().getTime()
+                });
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(myFile);
+                fileInput.files = dataTransfer.files;
+
+                cropModal.hide();
+            }, 'image/jpeg', 0.9);
+        });
+    });
+</script>
+{% endblock %}
