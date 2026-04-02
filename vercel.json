@@ -1,0 +1,11 @@
+{
+  "builds": [
+    {
+      "src": "core/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "scripts": {
+    "build": "python3 manage.py migrate && python3 manage.py collectstatic --noinput"
+  }
+}
