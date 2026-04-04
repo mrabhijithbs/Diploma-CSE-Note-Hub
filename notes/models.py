@@ -85,6 +85,8 @@ class Note(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def get_file_size(self):
         if self.file_size_bytes:
             size_mb = self.file_size_bytes / (1024 * 1024)
             return f"{round(size_mb, 2)} MB"
