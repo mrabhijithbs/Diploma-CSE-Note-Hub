@@ -550,8 +550,8 @@
 
     <div class="video-bg-container">
         <video autoplay muted loop playsinline class="video-bg">
-            <source src="/media/DNA.mp4" type="video/mp4" id="bgVideoSource">
-            <img src="/media/background.jpg" alt="Background Fallback">
+            <source src="{% static 'DNA.mp4' %}" type="video/mp4" id="bgVideoSource">
+            <img src="{% static 'background.jpg' %}" alt="Background Fallback">
         </video>
     </div>
 
@@ -702,7 +702,7 @@
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                videoBg.src = '/media/W-DNA.mp4';
+                videoBg.src = '/static/W-DNA.mp4';
                 videoElement.load();
             }
 
@@ -711,12 +711,12 @@
                 if (document.body.classList.contains('light-mode')) {
                     localStorage.setItem('theme', 'light');
                     themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                    videoBg.src = '/media/W-DNA.mp4';
+                    videoBg.src = '/static/W-DNA.mp4';
                     videoElement.load();
                 } else {
                     localStorage.setItem('theme', 'dark');
                     themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
-                    videoBg.src = '/media/DNA.mp4';
+                    videoBg.src = '/static/DNA.mp4';
                     videoElement.load();
                 }
             });
