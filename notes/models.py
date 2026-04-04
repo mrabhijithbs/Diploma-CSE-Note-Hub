@@ -72,16 +72,20 @@ class Note(models.Model):
     # Admin/Dashboard Fields
     is_approved = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    file_size_bytes = models.PositiveIntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.file and not self.file_size_bytes:
+            try:
+                self.file_size_bytes = self.file.size
+            except Exception:
+                pass
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
 
-    # Helper method to show file size in the template
-    def get_file_size(self):
-        try:
-            if self.file and os.path.exists(self.file.path):
-                size = self.file.size / (1024 * 1024)  # Convert bytes to MB
-                return f"{round(size, 2)} MB"
-        except Exception:
-            pass
+        if self.file_size_bytes:
+            size_mb = self.file_size_bytes / (1024 * 1024)
+            return f"{round(size_mb, 2)} MB"
         return "Unknown"

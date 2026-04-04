@@ -9,10 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7(it!c-!^5l6yywphj!ncw+r^j!2@rabc&_0gq(^yol3axct*_'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-7(it!c-!^5l6yywphj!ncw+r^j!2@rabc&_0gq(^yol3axct*_')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app', 'https://*.netlify.app']
@@ -53,7 +53,7 @@ import dj_database_url
 # Use the environment variable if it exists (Vercel), else fallback to SQLite (Local)
 if os.getenv('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.config(conn_max_age=0, ssl_require=True)
     }
 else:
     DATABASES = {
