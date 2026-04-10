@@ -34,6 +34,7 @@ urlpatterns = [
     # 10. Complaints
     path('complaints/', views.submit_complaint, name='submit_complaint'),
     path('admin/complaints/resolve/<int:complaint_id>/', views.resolve_complaint, name='resolve_complaint'),
+    path('admin/complaints/delete/<int:complaint_id>/', views.delete_complaint, name='delete_complaint'),
     path('notifications/read/', views.mark_notifications_read, name='mark_notifications_read'),
     
     # 11. Ask AI Routes

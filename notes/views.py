@@ -167,7 +167,16 @@ def resolve_complaint(request, complaint_id):
     messages.success(request, f"Complaint '{complaint.subject}' resolved. User notified.")
     return redirect('admin_dashboard')
 
-# 12. Mark Notifications as Read
+# 12. Admin Action: Delete Complaint
+@user_passes_test(lambda u: u.is_superuser)
+def delete_complaint(request, complaint_id):
+    complaint = get_object_or_404(Complaint, id=complaint_id)
+    subject = complaint.subject
+    complaint.delete()
+    messages.warning(request, f"Complaint '{subject}' has been deleted.")
+    return redirect('admin_dashboard')
+
+# 13. Mark Notifications as Read
 @login_required
 def mark_notifications_read(request):
     request.user.notifications.filter(is_read=False).update(is_read=True)
