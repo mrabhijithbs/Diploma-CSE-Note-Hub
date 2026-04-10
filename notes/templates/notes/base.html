@@ -825,6 +825,102 @@
             });
         });
     </script>
+
+    {% if user.is_authenticated %}
+    <!-- ================================================
+         LIVE NOTIFICATION TOAST (auto-polls every 30s)
+         ================================================ -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+        <div id="notifToast" class="toast align-items-center border-0 text-white"
+            role="alert" aria-live="assertive" aria-atomic="true"
+            style="background: rgba(15,23,42,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(56,189,248,0.3) !important; border-radius: 14px; min-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-start gap-3 px-3 py-3">
+                    <div class="mt-1" style="flex-shrink:0;">
+                        <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4);">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size:1rem;"></i>
+                        </span>
+                    </div>
+                    <div>
+                        <p class="mb-0 fw-semibold" style="font-size:0.85rem; color:#e2e8f0;">Complaint Update</p>
+                        <p id="notifToastMessage" class="mb-0" style="font-size:0.82rem; color:#94a3b8; line-height:1.5;">You have a new notification.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const POLL_INTERVAL_MS = 30000; // 30 seconds
+        const API_URL = '/api/notifications/';
+        let lastKnownCount = {{ unread_notifications_count|default:0 }};
+
+        function updateBellBadge(count) {
+            const bellBtn = document.getElementById('notifDropdown');
+            if (!bellBtn) return;
+
+            let badge = bellBtn.querySelector('.badge');
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger';
+                    badge.style.cssText = 'font-size: 0.6rem; padding: 3px 5px;';
+                    bellBtn.appendChild(badge);
+                }
+                badge.textContent = count;
+            } else {
+                if (badge) badge.remove();
+            }
+        }
+
+        function showToast(message) {
+            const toastEl = document.getElementById('notifToast');
+            const toastMsg = document.getElementById('notifToastMessage');
+            if (!toastEl || !toastMsg) return;
+
+            toastMsg.textContent = message;
+            const toast = new bootstrap.Toast(toastEl, { delay: 6000, autohide: true });
+            toast.show();
+        }
+
+        function pollNotifications() {
+            fetch(API_URL, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => {
+                if (!res.ok) return; // Logged out or error — skip silently
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                const newCount = data.count;
+
+                // Show toast only if count INCREASED (new notification arrived)
+                if (newCount > lastKnownCount && data.notifications.length > 0) {
+                    const latest = data.notifications[0];
+                    showToast(latest.message);
+                }
+
+                // Always update the bell badge to reflect current count
+                updateBellBadge(newCount);
+                lastKnownCount = newCount;
+            })
+            .catch(() => { /* Silently ignore network errors */ });
+        }
+
+        // Start polling after page is ready (wait 5s before first poll to avoid duplicate on load)
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                pollNotifications();
+                setInterval(pollNotifications, POLL_INTERVAL_MS);
+            }, 5000);
+        });
+    })();
+    </script>
+    {% endif %}
+
 </body>
 
 </html>

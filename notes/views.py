@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
@@ -130,6 +131,7 @@ def approve_note(request, note_id):
     return redirect('admin_dashboard')
 
 # 9. Admin Action: Delete Note
+@require_POST
 @user_passes_test(lambda u: u.is_superuser)
 def delete_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
@@ -154,6 +156,7 @@ def submit_complaint(request):
     return render(request, 'notes/submit_complaint.html', {'form': form})
 
 # 11. Admin Action: Resolve Complaint
+@require_POST
 @user_passes_test(lambda u: u.is_superuser)
 def resolve_complaint(request, complaint_id):
     complaint = get_object_or_404(Complaint, id=complaint_id)
@@ -171,6 +174,7 @@ def resolve_complaint(request, complaint_id):
     return redirect('admin_dashboard')
 
 # 12. Admin Action: Delete Complaint
+@require_POST
 @user_passes_test(lambda u: u.is_superuser)
 def delete_complaint(request, complaint_id):
     complaint = get_object_or_404(Complaint, id=complaint_id)
@@ -184,6 +188,24 @@ def delete_complaint(request, complaint_id):
 def mark_notifications_read(request):
     request.user.notifications.filter(is_read=False).update(is_read=True)
     return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+# 14. Get Unread Notifications (AJAX Polling Endpoint)
+@login_required
+def get_unread_notifications(request):
+    """Returns unread notifications as JSON for frontend polling."""
+    unread = request.user.notifications.filter(is_read=False).order_by('-created_at')
+    notifications_data = [
+        {
+            'id': n.id,
+            'message': n.message,
+            'created_at': n.created_at.strftime('%d %b %Y, %I:%M %p'),
+        }
+        for n in unread
+    ]
+    return JsonResponse({
+        'count': unread.count(),
+        'notifications': notifications_data,
+    })
 
 # 12. Ask AI View
 @login_required

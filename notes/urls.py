@@ -26,16 +26,17 @@ urlpatterns = [
     path('approve-note/<int:note_id>/', views.approve_note, name='approve_note'),
 
     # 8. Delete Note
-    path('admin/delete/<int:note_id>/', views.delete_note, name='delete_note'),
+    path('notes/delete/<int:note_id>/', views.delete_note, name='delete_note'),
 
     # 9. Profile View
     path('profile/', views.profile, name='profile'),
     
     # 10. Complaints
     path('complaints/', views.submit_complaint, name='submit_complaint'),
-    path('admin/complaints/resolve/<int:complaint_id>/', views.resolve_complaint, name='resolve_complaint'),
-    path('admin/complaints/delete/<int:complaint_id>/', views.delete_complaint, name='delete_complaint'),
+    path('complaints/resolve/<int:complaint_id>/', views.resolve_complaint, name='resolve_complaint'),
+    path('complaints/delete/<int:complaint_id>/', views.delete_complaint, name='delete_complaint'),
     path('notifications/read/', views.mark_notifications_read, name='mark_notifications_read'),
+    path('api/notifications/', views.get_unread_notifications, name='get_unread_notifications'),
     
     # 11. Ask AI Routes
     path('ask-ai/', views.ask_ai_view, name='ask_ai'),

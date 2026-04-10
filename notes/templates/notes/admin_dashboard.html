@@ -59,11 +59,13 @@
                             </a>
                             {% endif %}
 
-                            <a href="{% url 'delete_note' note.id %}"
-                                class="btn btn-sm btn-outline-danger border-0 ms-2"
-                                onclick="return confirm('Are you sure you want to delete this note?')">
-                                <i class="bi bi-trash3-fill"></i>
-                            </a>
+                            <form action="{% url 'delete_note' note.id %}" method="post" style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this note?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0 ms-2">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% empty %}
@@ -116,11 +118,13 @@
                             {% else %}
                             <span class="badge bg-secondary me-2">Resolved</span>
                             {% endif %}
-                            <a href="{% url 'delete_complaint' complaint.id %}"
-                                class="btn btn-sm btn-outline-danger border-0"
-                                onclick="return confirm('Are you sure you want to delete this complaint?')">
-                                <i class="bi bi-trash3-fill"></i>
-                            </a>
+                            <form action="{% url 'delete_complaint' complaint.id %}" method="post" style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this complaint?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% empty %}
@@ -230,12 +234,14 @@ document.addEventListener("DOMContentLoaded", function() {
         form.addEventListener("submit", function(e) {
             e.preventDefault();
             const btn = this.querySelector("button");
-            
+            const originalHTML = btn.innerHTML;
+
             // Show loading state
             btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Resolving...';
             btn.disabled = true;
 
             const formData = new FormData(this);
+            const formRef = this; // Keep reference before DOM manipulation
 
             fetch(this.action, {
                 method: "POST",
@@ -244,26 +250,40 @@ document.addEventListener("DOMContentLoaded", function() {
                     "X-Requested-With": "XMLHttpRequest"
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                // CRITICAL FIX: Check HTTP status before trying to parse JSON.
+                // Without this, a redirect (302 to login page) causes .json() to
+                // parse HTML, throw an error, and land in .catch() — resetting the button.
+                if (!response.ok) {
+                    throw new Error(`Server returned status ${response.status}. Session may have expired.`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === "success") {
-                    const row = this.closest("tr");
-                    
-                    // Update Status Badge (4th child based on 0-index = 5th column)
+                    const row = formRef.closest("tr");
+
+                    // Update Status column (index 4) -> "Finished" badge
                     const statusTd = row.querySelectorAll("td")[4];
                     statusTd.innerHTML = '<span class="badge rounded-pill bg-success-subtle text-success">Finished</span>';
-                    
-                    // Update Action Button
+
+                    // Replace the form with a static "Resolved" badge
                     const resolvedBadge = document.createElement('span');
                     resolvedBadge.className = 'badge bg-secondary me-2';
                     resolvedBadge.textContent = 'Resolved';
-                    this.replaceWith(resolvedBadge);
+                    formRef.replaceWith(resolvedBadge);
+                } else {
+                    // Server says not success — restore button and alert
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    alert('Could not resolve complaint. Please try again.');
                 }
             })
             .catch(error => {
                 console.error("Error resolving complaint:", error);
-                btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Resolve';
+                btn.innerHTML = originalHTML;
                 btn.disabled = false;
+                alert('An error occurred: ' + error.message + '\nPlease refresh the page and try again.');
             });
         });
     });
