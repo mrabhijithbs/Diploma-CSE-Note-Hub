@@ -31,7 +31,11 @@ urlpatterns = [
     # 9. Profile View
     path('profile/', views.profile, name='profile'),
     
-    # 10. Ask AI Routes
+    # 10. Complaints
+    path('complaints/', views.submit_complaint, name='submit_complaint'),
+    path('admin/complaints/resolve/<int:complaint_id>/', views.resolve_complaint, name='resolve_complaint'),
+    
+    # 11. Ask AI Routes
     path('ask-ai/', views.ask_ai_view, name='ask_ai'),
     path('api/ask-ai/', views.ask_ai_api, name='ask_ai_api'),
 ]

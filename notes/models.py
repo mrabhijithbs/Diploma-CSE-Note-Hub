@@ -91,3 +91,14 @@ class Note(models.Model):
             size_mb = self.file_size_bytes / (1024 * 1024)
             return f"{round(size_mb, 2)} MB"
         return "Unknown"
+
+# 7. Complaint Model
+class Complaint(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='complaints')
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Complaint by {self.user.username}: {self.subject}"

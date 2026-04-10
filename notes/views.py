@@ -4,9 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Q, Count
-# Added Profile to imports
-from .models import Year, Semester, Subject, Note, Profile
-from .forms import UserUpdateForm, ProfileUpdateForm
+# Added Profile, Complaint to imports
+from .models import Year, Semester, Subject, Note, Profile, Complaint
+from .forms import UserUpdateForm, ProfileUpdateForm, ComplaintForm
 import os
 import json
 import google.generativeai as genai
@@ -83,6 +83,7 @@ def note_list(request, subject_id):
     })
 
 # 5. Dedicated Search View
+@login_required
 def search(request):
     query = request.GET.get('q')
     results = Note.objects.filter(title__icontains=query, is_approved=True) if query else []
@@ -108,12 +109,14 @@ def admin_dashboard(request):
     total_subjects = Subject.objects.count()
     recent_uploads = Note.objects.all().order_by('-uploaded_at')[:5]
     pending_notes = Note.objects.filter(is_approved=False).order_by('-uploaded_at')
+    complaints = Complaint.objects.all().order_by('-created_at')
     
     context = {
         'total_notes': total_notes,
         'total_subjects': total_subjects,
         'recent_uploads': recent_uploads,
         'pending_notes': pending_notes,
+        'complaints': complaints,
     }
     return render(request, 'notes/admin_dashboard.html', context)
 
@@ -135,12 +138,36 @@ def delete_note(request, note_id):
     messages.warning(request, f"Note '{title}' has been deleted.")
     return redirect('admin_dashboard')
 
-# 10. Ask AI View
+# 10. Complaint Submit View
+@login_required
+def submit_complaint(request):
+    if request.method == 'POST':
+        form = ComplaintForm(request.POST)
+        if form.is_valid():
+            complaint = form.save(commit=False)
+            complaint.user = request.user
+            complaint.save()
+            messages.success(request, "Your complaint has been submitted successfully.")
+            return redirect('home')
+    else:
+        form = ComplaintForm()
+    return render(request, 'notes/submit_complaint.html', {'form': form})
+
+# 11. Admin Action: Resolve Complaint
+@user_passes_test(lambda u: u.is_superuser)
+def resolve_complaint(request, complaint_id):
+    complaint = get_object_or_404(Complaint, id=complaint_id)
+    complaint.is_resolved = True
+    complaint.save()
+    messages.success(request, f"Complaint '{complaint.subject}' resolved successfully.")
+    return redirect('admin_dashboard')
+
+# 12. Ask AI View
 @login_required
 def ask_ai_view(request):
     return render(request, 'notes/ask_ai.html')
 
-# 11. Ask AI API Endpoint
+# 13. Ask AI API Endpoint
 @login_required
 def ask_ai_api(request):
     if request.method == "POST":
