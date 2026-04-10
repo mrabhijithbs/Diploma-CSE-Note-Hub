@@ -47,16 +47,12 @@ class SubjectAdmin(admin.ModelAdmin):
 # 4. Note Admin
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_programme', 'subject', 'get_semester', 'get_year', 'is_approved', 'uploaded_at')
+    list_display = ('title', 'programme', 'subject', 'get_semester', 'get_year', 'is_approved', 'uploaded_at')
     # Deep filtering: Programme -> Year -> Semester -> Subject
-    list_filter = ('subject__programme', 'subject__semester__year', 'subject__semester', 'is_approved')
-    search_fields = ('title', 'subject__name', 'subject__programme__name', 'subject__programme__code')
-    autocomplete_fields = ['subject']
-    readonly_fields = ('uploaded_at', 'file_size_bytes')
-
-    def get_programme(self, obj):
-        return obj.subject.programme.name if obj.subject and obj.subject.programme else "N/A"
-    get_programme.short_description = 'Programme'
+    list_filter = ('programme', 'subject__semester__year', 'subject__semester', 'is_approved')
+    search_fields = ('title', 'subject__name', 'programme__name', 'programme__code')
+    autocomplete_fields = ['subject', 'programme']
+    readonly_fields = ('uploaded_at',)
 
     def get_semester(self, obj):
         return obj.subject.semester.number if obj.subject and obj.subject.semester else "N/A"

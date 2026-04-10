@@ -31,12 +31,15 @@ def programme_detail(request, prog_code):
     
     if query:
         results = Note.objects.filter(
-            Q(subject__programme=programme),
+            Q(programme=programme) | Q(subject__programme=programme),
             Q(title__icontains=query) | Q(subject__name__icontains=query)
         ).distinct()
 
     years = Year.objects.all().prefetch_related('semesters').order_by('number')
-    recent_notes = Note.objects.filter(is_approved=True, subject__programme=programme).order_by('-uploaded_at')[:10]
+    recent_notes = Note.objects.filter(
+        Q(programme=programme) | Q(subject__programme=programme),
+        is_approved=True
+    ).order_by('-uploaded_at')[:10]
 
     context = {
         'programme': programme,

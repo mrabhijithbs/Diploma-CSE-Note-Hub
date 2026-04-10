@@ -77,6 +77,7 @@ class Subject(models.Model):
 class Note(models.Model):
     title = models.CharField(max_length=200)
     file = models.FileField(upload_to=get_upload_path) 
+    programme = models.ForeignKey(Programme, on_delete=models.CASCADE, related_name='direct_notes', null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='notes')
     
     # Admin/Dashboard Fields
