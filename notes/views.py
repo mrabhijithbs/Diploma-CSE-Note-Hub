@@ -164,6 +164,9 @@ def resolve_complaint(request, complaint_id):
         user=complaint.user,
         message=f'Your complaint "{complaint.subject}" has been reviewed and resolved by the admin. Thank you for your feedback!'
     )
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success'})
+        
     messages.success(request, f"Complaint '{complaint.subject}' resolved. User notified.")
     return redirect('admin_dashboard')
 

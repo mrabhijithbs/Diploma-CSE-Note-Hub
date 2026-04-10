@@ -107,7 +107,7 @@
                         </td>
                         <td class="text-end">
                             {% if not complaint.is_resolved %}
-                            <form action="{% url 'resolve_complaint' complaint.id %}" method="post" style="display:inline;">
+                            <form action="{% url 'resolve_complaint' complaint.id %}" method="post" class="resolve-complaint-form" data-complaint-id="{{ complaint.id }}" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-success">
                                     <i class="bi bi-check-circle me-1"></i> Resolve
@@ -222,4 +222,51 @@
         border-color: rgba(133, 77, 14, 0.2); 
     }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const resolveForms = document.querySelectorAll(".resolve-complaint-form");
+    resolveForms.forEach(form => {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const btn = this.querySelector("button");
+            
+            // Show loading state
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Resolving...';
+            btn.disabled = true;
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const row = this.closest("tr");
+                    
+                    // Update Status Badge (4th child based on 0-index = 5th column)
+                    const statusTd = row.querySelectorAll("td")[4];
+                    statusTd.innerHTML = '<span class="badge rounded-pill bg-success-subtle text-success">Finished</span>';
+                    
+                    // Update Action Button
+                    const resolvedBadge = document.createElement('span');
+                    resolvedBadge.className = 'badge bg-secondary me-2';
+                    resolvedBadge.textContent = 'Resolved';
+                    this.replaceWith(resolvedBadge);
+                }
+            })
+            .catch(error => {
+                console.error("Error resolving complaint:", error);
+                btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Resolve';
+                btn.disabled = false;
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
