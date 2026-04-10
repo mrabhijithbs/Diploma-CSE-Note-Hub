@@ -3,11 +3,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # 1. The Home Page (Root URL)
+    # 1. The Home Page (Root URL - Programme Selection)
     path('', views.home, name='home'), 
     
+    # 1.5 Programme Detail View
+    path('programme/<str:prog_code>/', views.programme_detail, name='programme_detail'),
+
     # 2. Subject List View
-    path('semester/<int:semester_number>/', views.subject_list, name='subject_list'),
+    path('programme/<str:prog_code>/semester/<int:semester_number>/', views.subject_list, name='subject_list'),
     
     # 3. Note List View
     path('subject/<int:subject_id>/', views.note_list, name='note_list'),

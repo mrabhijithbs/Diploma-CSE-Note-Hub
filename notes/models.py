@@ -2,6 +2,14 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 
+# 0. Programme Model
+class Programme(models.Model):
+    name = models.CharField(max_length=100) # e.g., "Computer Science"
+    code = models.CharField(max_length=20, unique=True) # e.g., "DCSE"
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
 # 1. User Profile Model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -58,9 +66,11 @@ class Semester(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=200)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name='subjects')
+    programme = models.ForeignKey(Programme, on_delete=models.CASCADE, related_name='subjects', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} (S{self.semester.number})"
+        code = self.programme.code if self.programme else "Gen"
+        return f"{self.name} ({code}-S{self.semester.number})"
         
 
 # 6. Note Model

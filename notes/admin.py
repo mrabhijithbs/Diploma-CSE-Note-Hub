@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Year, Semester, Subject, Note
+from .models import Year, Semester, Subject, Note, Programme
 
 # --- INLINES ---
 # This allows you to manage Semesters directly while editing a Year
@@ -9,6 +9,10 @@ class SemesterInline(admin.TabularInline):
 
 # --- MODEL ADMINS ---
 
+@admin.register(Programme)
+class ProgrammeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name')
+    search_fields = ('code', 'name')
 # 1. Year Admin
 @admin.register(Year)
 class YearAdmin(admin.ModelAdmin):

@@ -7,8 +7,9 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-white p-3 rounded shadow-sm border">
             <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none"><i
-                        class="bi bi-house-door"></i> Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'subject_list' subject.semester.number %}"
+                        class="bi bi-house-door"></i> Hubs</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'programme_detail' subject.programme.code %}" class="text-decoration-none">{{ subject.programme.code }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'subject_list' subject.programme.code subject.semester.number %}"
                     class="text-decoration-none">Semester {{ subject.semester.number }}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ subject.name }}</li>
         </ol>
@@ -59,7 +60,7 @@
             </div>
             <h4 class="text-muted">No notes uploaded for this subject yet.</h4>
             <p class="text-muted small">Check back later or contact your class leader.</p>
-            <a href="{% url 'subject_list' subject.semester.number %}" class="btn btn-outline-secondary mt-3">
+            <a href="{% url 'subject_list' subject.programme.code subject.semester.number %}" class="btn btn-outline-secondary mt-3">
                 <i class="bi bi-arrow-left"></i> Back to Subjects
             </a>
         </div>

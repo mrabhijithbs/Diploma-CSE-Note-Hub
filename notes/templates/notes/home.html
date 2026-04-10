@@ -7,96 +7,28 @@
     <section class="text-center py-5 mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-extrabold text-dark mb-3 reveal">DCSE notes HUB</h1>
-                <p class="lead text-muted mb-4 reveal reveal-delay-1">Your Gateway to Academic Excellence at MGCE. Designed
-                    specifically for
-                    the CSE department to streamline learning and provide every student with the resources they need
-                    to
-                    succeed in their polytechnic journey.</p>
-
-                <form action="{% url 'search' %}" method="get"
-                    class="rounded-pill p-2 d-flex search-glass-container reveal reveal-delay-2">
-                    <input type="text" name="q" class="form-control border-0 shadow-none ps-4"
-                        placeholder="Search for subjects, topics, or modules...">
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 mx-1">
-                        <i class="bi bi-search me-2"></i> Search
-                    </button>
-                </form>
+                <h1 class="display-4 fw-extrabold text-dark mb-3 reveal">DiplomaNote Hub</h1>
+                <p class="lead text-muted mb-4 reveal reveal-delay-1">Select your Diploma Programme to access your dedicated resources, notes, and study materials.</p>
             </div>
         </div>
     </section>
 
-    <div class="row g-5">
-
-        <div class="col-12 reveal">
-            <div class="d-flex align-items-center mb-4">
-                <hr class="flex-grow-1">
-                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
-                    <h3>First Year</h3>
-                </span>
-                <hr class="flex-grow-1">
-            </div>
-            <div class="row g-4">
-                {% for sem in "12"|make_list %}
-                <div class="col-md-6 reveal reveal-delay-1">
-                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
-                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
-                            <p class="text-muted small mb-0">View all 1st Year subjects</p>
-                        </div>
-                    </a>
+    <div class="row g-4 justify-content-center">
+        {% for programme in programmes %}
+        <div class="col-md-6 col-lg-4 reveal reveal-delay-{{ forloop.counter0 }}">
+            <a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
+                    <span class="display-4 fw-black text-primary opacity-75 mb-3">{{ programme.code }}</span>
+                    <h4 class="fw-bold text-dark mb-2">{{ programme.name }}</h4>
+                    <p class="text-muted small mb-0">Enter the {{ programme.code }} Hub</p>
                 </div>
-                {% endfor %}
-            </div>
+            </a>
         </div>
-
-        <div class="col-12 reveal">
-            <div class="d-flex align-items-center mb-4">
-                <hr class="flex-grow-1">
-                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
-                    <h3>Second Year</h3>
-                </span>
-                <hr class="flex-grow-1">
-            </div>
-            <div class="row g-4">
-                {% for sem in "34"|make_list %}
-                <div class="col-md-6 reveal reveal-delay-1">
-                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
-                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
-                            <p class="text-muted small mb-0">View core technical subjects</p>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            <p>No programmes available yet. Please add them in the admin dashboard.</p>
         </div>
-
-        <div class="col-12 reveal">
-            <div class="d-flex align-items-center mb-4">
-                <hr class="flex-grow-1">
-                <span class="mx-3 text-uppercase fw-bold text-primary tracking-wider small">
-                    <h3>Third Year</h3>
-                </span>
-                <hr class="flex-grow-1">
-            </div>
-            <div class="row g-4">
-                {% for sem in "56"|make_list %}
-                <div class="col-md-6 reveal reveal-delay-1">
-                    <a href="{% url 'subject_list' sem %}" class="text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
-                            <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
-                            <p class="text-muted small mb-0">Advanced modules & project resources</p>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
+        {% endfor %}
     </div>
 </div>
 

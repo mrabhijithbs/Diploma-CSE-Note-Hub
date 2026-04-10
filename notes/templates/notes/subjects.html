@@ -7,7 +7,8 @@
 <div class="container mt-4">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none"><i class="bi bi-house-door"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none"><i class="bi bi-house-door"></i> Hubs</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none">{{ programme.code }}</a></li>
             <li class="breadcrumb-item active" aria-current="page text-dark">Semester {{ semester.number }}</li>
         </ol>
     </nav>

@@ -552,8 +552,8 @@
 
     <div class="video-bg-container">
         <video autoplay muted loop playsinline class="video-bg">
-            <source src="/DNA.mp4" type="video/mp4" id="bgVideoSource">
-            <img src="/background.jpg" alt="Background Fallback">
+            <source src="{% static 'DNA.mp4' %}" type="video/mp4" id="bgVideoSource" data-dark-src="{% static 'DNA.mp4' %}" data-light-src="{% static 'W-DNA.mp4' %}">
+            <img src="{% static 'background.jpg' %}" alt="Background Fallback">
         </video>
     </div>
 
@@ -571,7 +571,13 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Push actions to the right -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item ms-lg-3">
+                        <a class="nav-link text-white fw-bold opacity-75" href="{% url 'home' %}" style="transition: opacity 0.3s;">
+                            <i class="bi bi-grid-fill me-1"></i> Change Programme
+                        </a>
+                    </li>
+                </ul>
 
                 <div
                     class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-3 mt-4 mt-lg-0 pb-3 pb-lg-0">
@@ -764,7 +770,7 @@
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                videoBg.src = '/W-DNA.mp4';
+                videoBg.src = videoBg.getAttribute('data-light-src');
                 videoElement.load();
             }
 
@@ -773,12 +779,12 @@
                 if (document.body.classList.contains('light-mode')) {
                     localStorage.setItem('theme', 'light');
                     themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                    videoBg.src = '/W-DNA.mp4';
+                    videoBg.src = videoBg.getAttribute('data-light-src');
                     videoElement.load();
                 } else {
                     localStorage.setItem('theme', 'dark');
                     themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
-                    videoBg.src = '/DNA.mp4';
+                    videoBg.src = videoBg.getAttribute('data-dark-src');
                     videoElement.load();
                 }
             });

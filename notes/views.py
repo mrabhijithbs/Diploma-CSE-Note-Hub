@@ -6,33 +6,46 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Q, Count
 # Added Profile, Complaint to imports
-from .models import Year, Semester, Subject, Note, Profile, Complaint, Notification
+from .models import Year, Semester, Subject, Note, Profile, Complaint, Notification, Programme
 from .forms import UserUpdateForm, ProfileUpdateForm, ComplaintForm
 import os
 import json
 import google.generativeai as genai
 from django.http import JsonResponse
 
-# 1. The Home View
+# 1. The Home View (Programme Selection)
 def home(request):
+    programmes = Programme.objects.all().order_by('code')
+    
+    context = {
+        'programmes': programmes,
+    }
+    return render(request, 'notes/home.html', context)
+
+# 1.5 Programme Detail View (Portal for a specific department)
+def programme_detail(request, prog_code):
+    programme = get_object_or_404(Programme, code=prog_code)
+    
     query = request.GET.get('q')
     results = []
     
     if query:
         results = Note.objects.filter(
+            Q(subject__programme=programme),
             Q(title__icontains=query) | Q(subject__name__icontains=query)
         ).distinct()
 
     years = Year.objects.all().prefetch_related('semesters').order_by('number')
-    recent_notes = Note.objects.filter(is_approved=True).order_by('-uploaded_at')[:10]
+    recent_notes = Note.objects.filter(is_approved=True, subject__programme=programme).order_by('-uploaded_at')[:10]
 
     context = {
+        'programme': programme,
         'years': years,
         'recent_notes': recent_notes,
         'query': query,
         'results': results,
     }
-    return render(request, 'notes/home.html', context)
+    return render(request, 'notes/programme_detail.html', context)
 
 # 2. User Profile View (Safely handles missing profiles)
 @login_required
@@ -61,13 +74,15 @@ def profile(request):
 
 # 3. The Subject List View
 @login_required
-def subject_list(request, semester_number):
+def subject_list(request, prog_code, semester_number):
+    programme = get_object_or_404(Programme, code=prog_code)
     semester = get_object_or_404(Semester, number=semester_number)
-    subjects = Subject.objects.filter(semester=semester).annotate(
+    subjects = Subject.objects.filter(semester=semester, programme=programme).annotate(
         note_count=Count('notes')
     )
     
     return render(request, 'notes/subjects.html', {
+        'programme': programme,
         'semester': semester,
         'subjects': subjects
     })
