@@ -24,8 +24,17 @@ urlpatterns = [
 ]
 
 print(f"DEBUGGING MEDIA ROOT: {settings.MEDIA_ROOT}")
-# 5. Media File Serving
+# 5. Media & Public File Serving
 # This block handles the serving of media files (PDFs, Profile Pictures)
-# specifically when DEBUG is True in your settings.py
+# and public root assets (like background videos) when DEBUG is True.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    # Serve assets from the public folder (Simulating Vercel's root public directory)
+    from django.views.static import serve
+    import os
+    urlpatterns += [
+        path('<path:path>', serve, {
+            'document_root': os.path.join(settings.BASE_DIR, 'public'),
+        }),
+    ]

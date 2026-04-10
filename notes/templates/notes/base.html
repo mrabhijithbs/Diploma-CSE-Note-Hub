@@ -552,8 +552,8 @@
 
     <div class="video-bg-container">
         <video autoplay muted loop playsinline class="video-bg">
-            <source src="{% static 'DNA.mp4' %}" type="video/mp4" id="bgVideoSource" data-dark-src="{% static 'DNA.mp4' %}" data-light-src="{% static 'W-DNA.mp4' %}">
-            <img src="{% static 'background.jpg' %}" alt="Background Fallback">
+            <source src="/DNA.mp4" type="video/mp4" id="bgVideoSource" data-dark-src="/DNA.mp4" data-light-src="/W-DNA.mp4">
+            <img src="/background.jpg" alt="Background Fallback">
         </video>
     </div>
 
@@ -573,8 +573,8 @@
                 <!-- Push actions to the right -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item ms-lg-3">
-                        <a class="nav-link text-white fw-bold opacity-75" href="{% url 'home' %}" style="transition: opacity 0.3s;">
-                            <i class="bi bi-grid-fill me-1"></i> Change Programme
+                        <a class="nav-link text-dark fw-bold opacity-75" href="{% url 'home' %}" style="transition: opacity 0.3s;">
+                            <i class="bi bi-grid-fill me-1"></i> Change Hub
                         </a>
                     </li>
                 </ul>
