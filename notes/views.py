@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Q, Count
 # Added Profile, Complaint to imports
-from .models import Year, Semester, Subject, Note, Profile, Complaint
+from .models import Year, Semester, Subject, Note, Profile, Complaint, Notification
 from .forms import UserUpdateForm, ProfileUpdateForm, ComplaintForm
 import os
 import json
@@ -159,8 +159,19 @@ def resolve_complaint(request, complaint_id):
     complaint = get_object_or_404(Complaint, id=complaint_id)
     complaint.is_resolved = True
     complaint.save()
-    messages.success(request, f"Complaint '{complaint.subject}' resolved successfully.")
+    # Create an in-app notification for the user who filed the complaint
+    Notification.objects.create(
+        user=complaint.user,
+        message=f'Your complaint "{complaint.subject}" has been reviewed and resolved by the admin. Thank you for your feedback!'
+    )
+    messages.success(request, f"Complaint '{complaint.subject}' resolved. User notified.")
     return redirect('admin_dashboard')
+
+# 12. Mark Notifications as Read
+@login_required
+def mark_notifications_read(request):
+    request.user.notifications.filter(is_read=False).update(is_read=True)
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 # 12. Ask AI View
 @login_required
