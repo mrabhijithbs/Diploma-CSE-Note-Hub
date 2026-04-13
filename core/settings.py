@@ -53,7 +53,11 @@ import dj_database_url
 # Use the environment variable if it exists (Vercel), else fallback to SQLite (Local)
 if os.getenv('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=0, ssl_require=True)
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=60,  # Keeps the connection warm for 60 seconds
+            ssl_require=True
+        )
     }
 else:
     DATABASES = {
