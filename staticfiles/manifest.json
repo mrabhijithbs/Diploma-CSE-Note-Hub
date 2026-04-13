@@ -4,8 +4,8 @@
   "description": "DiplomaNote Hub - Your one-stop destination for diploma notes at MGCE Polytechnic",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0ea5e9",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
   "orientation": "portrait-primary",
   "icons": [
     {
