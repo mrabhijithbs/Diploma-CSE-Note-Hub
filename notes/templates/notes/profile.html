@@ -16,7 +16,7 @@
                         <img src="{{ user.profile.get_avatar_url }}" id="profilePreview" class="rounded-circle border shadow-sm"
                             style="width: 120px; height: 120px; object-fit: cover;">
                     {% endif %}
-                    <h3 class="fw-bold mt-3">{{ user.username }}</h3>
+                    <h1 class="h3 fw-bold mt-3">{{ user.username }}</h1>
                 </div>
 
                 <form method="POST" enctype="multipart/form-data">
@@ -41,9 +41,9 @@
 </div>
 
 <!-- Cropper.js CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" crossorigin="anonymous" />
 <!-- Cropper.js JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" crossorigin="anonymous"></script>
 
 <!-- Crop Modal -->
 <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true"

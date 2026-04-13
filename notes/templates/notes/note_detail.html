@@ -27,7 +27,7 @@
                     <div class="bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3">
                         <i class="bi bi-file-earmark-pdf-fill display-4"></i>
                     </div>
-                    <h4 class="fw-bold mb-2">{{ note.title }}</h4>
+                    <h1 class="h4 fw-bold mb-2">{{ note.title }}</h1>
                     <p class="text-muted small mb-4">Uploaded for {{ note.subject.name }}</p>
                     
                     <hr class="border-secondary opacity-25">
@@ -91,10 +91,10 @@
                     <!-- Smart Fallback for Mobile (Hidden by default, shown if needed) -->
                     <div id="mobile-fallback" class="d-none p-4 text-center h-100 flex-column justify-content-center bg-white text-dark">
                         <i class="bi bi-phone-vibrate display-4 mb-3 text-info"></i>
-                        <h5>Mobile Preview Notice</h5>
+                        <h2 class="h5">Mobile Preview Notice</h2>
                         <p class="small text-muted mb-4">Some mobile browsers can't render large PDFs inside a web page. For the best experience, use our direct viewer or download to your device.</p>
                         <div class="d-grid gap-2">
-                            <a href="https://docs.google.com/viewer?url={{ note.file.url|urlencode }}&embedded=true" target="_blank" class="btn btn-info text-white">
+                            <a href="https://docs.google.com/viewer?url={{ note.file.url|urlencode }}&embedded=true" target="_blank" rel="noopener noreferrer" class="btn btn-info text-white">
                                 <i class="bi bi-google me-2"></i> Open in Google Viewer
                             </a>
                             <a href="{{ note.file.url }}" class="btn btn-primary">
@@ -105,7 +105,7 @@
                     {% else %}
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
                         <i class="bi bi-exclamation-octagon display-1 text-danger mb-3"></i>
-                        <h5>Unable to load document</h5>
+                        <h2 class="h5">Unable to load document</h2>
                         <p class="text-muted">The file might be missing or the URL is invalid.</p>
                     </div>
                     {% endif %}

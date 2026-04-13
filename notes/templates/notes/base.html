@@ -5,6 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DiplomaNote Hub — your one-stop destination for diploma study notes, lecture materials, and resources at MGCE Polytechnic. Access PDFs for all semesters and programmes.">
     <title>{% block title %}DiplomaNote Hub - MGCE{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
@@ -19,10 +20,20 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b0e14" media="(prefers-color-scheme: dark)">
+
+    <!-- Preconnect to CDN origins for faster resource loading -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical CSS (Bootstrap) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'notes/main.css' %}">
+
+    <!-- Non-critical CSS: load asynchronously via media swap trick -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
     <style>
         :root {
@@ -215,7 +226,7 @@
 
         /* GLOBAL TEXT OVERRIDES FOR PREMIUM DARK THEME */
         .text-muted {
-            color: #94a3b8 !important;
+            color: #b0bec5 !important;
         }
 
         .text-dark {
@@ -572,9 +583,10 @@
 <body class="d-flex flex-column min-vh-100">
 
     <div class="video-bg-container">
-        <video autoplay muted loop playsinline class="video-bg">
+        <video autoplay muted loop playsinline preload="none" class="video-bg">
             <source src="/DNA.mp4" type="video/mp4" id="bgVideoSource" data-dark-src="/DNA.mp4"
                 data-light-src="/W-DNA.mp4">
+            <track kind="captions" src="" label="No captions" default>
             <img src="/background.jpg" alt="Background Fallback">
         </video>
     </div>
@@ -587,7 +599,7 @@
             </a>
 
             <button class="navbar-toggler border-0 shadow-none px-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
                 <i class="bi bi-list mobile-menu-icon" style="font-size: 2.2rem;"></i>
             </button>
 
@@ -607,7 +619,7 @@
                     <!-- THEME TOGGLE BUTTON -->
                     <div class="d-flex justify-content-start justify-content-lg-center">
                         <button class="btn btn-outline-dark btn-sm bg-white bg-opacity-10 rounded-circle shadow-sm"
-                            id="themeToggle" type="button"
+                            id="themeToggle" type="button" aria-label="Toggle light or dark theme"
                             style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
                             <i class="bi bi-moon-fill" id="themeIcon"></i>
                         </button>
@@ -631,7 +643,7 @@
                     <div class="dropdown position-relative">
                         <button
                             class="btn btn-outline-dark btn-sm bg-white bg-opacity-10 rounded-circle shadow-sm position-relative notification-btn"
-                            id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                            id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications"
                             style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
                             <i class="bi bi-bell-fill"></i>
                             {% if unread_notifications_count > 0 %}
@@ -755,14 +767,14 @@
 
             <!-- Quick Links with Liquid Glass Animation -->
             <div class="d-flex justify-content-center flex-wrap gap-3 mb-5">
-                <a href="https://www.mgcet.com/" target="_blank" class="btn-glass-liquid">
+                <a href="https://www.mgcet.com/" target="_blank" rel="noopener noreferrer" class="btn-glass-liquid">
                     <i class="bi bi-bank me-2"></i> MGCET Official
                 </a>
-                <a href="https://www.sbte.kerala.gov.in/login" target="_blank" class="btn-glass-liquid">
+                <a href="https://www.sbte.kerala.gov.in/login" target="_blank" rel="noopener noreferrer" class="btn-glass-liquid">
                     <i class="bi bi-person-fill-lock me-2"></i> SBTE Login
                 </a>
                 <a href="https://sitttrkerala.ac.in/index.php?r=site%2Fdiploma-syllabus-courses&amp;prog=CS"
-                    target="_blank" class="btn-glass-liquid">
+                    target="_blank" rel="noopener noreferrer" class="btn-glass-liquid">
                     <i class="bi bi-journal-bookmark-fill me-2"></i> Diploma Syllabus
                 </a>
                 <a href="{% url 'submit_complaint' %}" class="btn-glass-liquid">
@@ -770,7 +782,7 @@
                 </a>
             </div>
 
-            <h5 class="fw-bold mb-3">MGCE CSE Department</h5>
+            <p class="fw-bold mb-3 fs-5">MGCE CSE Department</p>
             <p class="mb-1 text-secondary">&copy; 2026 MGCE Polytechnic CSE.</p>
             <div class="mt-2 mb-4">
                 <i class="bi bi-mortarboard-fill me-2"></i>
@@ -781,7 +793,7 @@
             <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
                 <small class="text-secondary d-flex align-items-center justify-content-center gap-2">
                     <span>Designed & Developed by</span>
-                    <a href="https://github.com/mrabhijithbs" target="_blank"
+                    <a href="https://github.com/mrabhijithbs" target="_blank" rel="noopener noreferrer"
                         class="text-decoration-none fw-bold text-primary developer-link"
                         style="transition: all 0.3s ease;">
                         Abhijith B S , Adil S, Muhammad Arfan
@@ -791,10 +803,11 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script>
-        // THEME TOGGLE SCRIPT (DNA / W-DNA)
+        // CONSOLIDATED DOMContentLoaded — single listener reduces main-thread scheduling overhead
         document.addEventListener('DOMContentLoaded', () => {
+            // === THEME TOGGLE SCRIPT (DNA / W-DNA) ===
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const videoBg = document.getElementById('bgVideoSource');
@@ -803,61 +816,52 @@
             // Apply theme on load based on localStorage
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
-                themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                videoBg.src = videoBg.getAttribute('data-light-src');
-                videoElement.load();
+                if (themeIcon) themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+                if (videoBg) videoBg.src = videoBg.getAttribute('data-light-src');
+                if (videoElement) videoElement.load();
+            } else {
+                // Lazy-start the dark video after first paint
+                if (videoElement) videoElement.load();
             }
 
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('light-mode');
-                if (document.body.classList.contains('light-mode')) {
-                    localStorage.setItem('theme', 'light');
-                    themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
-                    videoBg.src = videoBg.getAttribute('data-light-src');
-                    videoElement.load();
-                } else {
-                    localStorage.setItem('theme', 'dark');
-                    themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
-                    videoBg.src = videoBg.getAttribute('data-dark-src');
-                    videoElement.load();
-                }
-            });
-        });
-
-        // SCROLL REVEAL SCRIPT
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-
-            const revealOptions = {
-                threshold: 0.1,
-                rootMargin: "0px 0px -50px 0px"
-            };
-
-            const revealOnScroll = new IntersectionObserver(function (entries, observer) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('light-mode');
+                    if (document.body.classList.contains('light-mode')) {
+                        localStorage.setItem('theme', 'light');
+                        themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+                        if (videoBg) { videoBg.src = videoBg.getAttribute('data-light-src'); videoElement.load(); }
                     } else {
-                        entry.target.classList.remove('is-visible');
+                        localStorage.setItem('theme', 'dark');
+                        themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+                        if (videoBg) { videoBg.src = videoBg.getAttribute('data-dark-src'); videoElement.load(); }
                     }
                 });
-            }, revealOptions);
+            }
 
-            reveals.forEach(reveal => {
-                revealOnScroll.observe(reveal);
-            });
+            // === SCROLL REVEAL SCRIPT ===
+            const reveals = document.querySelectorAll('.reveal');
+            if (reveals.length > 0) {
+                const revealOnScroll = new IntersectionObserver(function (entries) {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                        } else {
+                            entry.target.classList.remove('is-visible');
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-            // WATER DROPLET BUTTON MOUSE TRACKING
+                reveals.forEach(reveal => revealOnScroll.observe(reveal));
+            }
+
+            // === WATER DROPLET BUTTON MOUSE TRACKING ===
             document.querySelectorAll('.btn-glass-liquid').forEach(btn => {
                 btn.addEventListener('mousemove', e => {
                     const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    btn.style.setProperty('--x', `${x}px`);
-                    btn.style.setProperty('--y', `${y}px`);
+                    btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                    btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
                 });
-
-                // Optional: Recenter droplet when mouse leaves to avoid sticky position on next hover
                 btn.addEventListener('mouseleave', () => {
                     btn.style.setProperty('--x', `50%`);
                     btn.style.setProperty('--y', `50%`);
