@@ -10,7 +10,9 @@ from .models import Year, Semester, Subject, Note, Profile, Complaint, Notificat
 from .forms import UserUpdateForm, ProfileUpdateForm, ComplaintForm
 import os
 import json
+import time
 import google.generativeai as genai
+from huggingface_hub import InferenceClient
 from django.http import JsonResponse
 
 # 1. The Home View (Programme Selection)
@@ -240,20 +242,63 @@ def ask_ai_api(request):
             if not prompt:
                 return JsonResponse({"error": "Empty prompt"}, status=400)
             
-            # Use environment variable for the API key
-            # Since the API key needs to be configured once, we configure it here
-            api_key = os.environ.get("GEMINI_API_KEY")
-            if not api_key:
-                return JsonResponse({"error": "Gemini API key is not configured in .env"}, status=500)
-                
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-2.5-flash')
-            
-            # Inject context
+            # Inject context for the AI
             sys_prompt = f"You are a helpful AI assistant for Diploma students at MGCE Polytechnic. Answer this question clearly and concisely: {prompt}"
-            response = model.generate_content(sys_prompt)
-            return JsonResponse({"response": response.text})
+            
+            # Try Gemini first, failover to Hugging Face
+            response_text = get_ai_response(sys_prompt)
+            return JsonResponse({"response": response_text})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
             
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+# --- AI Helper Functions (Failover Logic) ---
+
+def call_hf_model(prompt, model_id="google/gemma-2-9b-it", retries=2):
+    """Calls Hugging Face Inference API with cold-start retry logic."""
+    hf_token = os.environ.get("HF_TOKEN")
+    if not hf_token:
+        return "Hugging Face API token is not configured."
+    
+    client = InferenceClient(token=hf_token)
+    
+    for attempt in range(retries + 1):
+        try:
+            response = client.chat_completion(
+                model=model_id,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500,
+                temperature=0.7
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            if "503" in str(e) and attempt < retries:
+                # Model is loading (cold start), wait and retry
+                time.sleep(10)
+                continue
+            else:
+                return f"Hugging Face error: {e}"
+    
+    return "Sorry, the AI model is currently unavailable. Please try again later."
+
+
+def get_ai_response(prompt):
+    """Tries Gemini first. If quota is exceeded (429), switches to Hugging Face."""
+    try:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            # No Gemini key, go straight to Hugging Face
+            return call_hf_model(prompt)
+        
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        response = model.generate_content(prompt)
+        return response.text
+        
+    except Exception as e:
+        if "429" in str(e) or "quota" in str(e).lower():
+            # Gemini limit hit, switch to Hugging Face
+            return call_hf_model(prompt)
+        return f"An error occurred: {e}"
