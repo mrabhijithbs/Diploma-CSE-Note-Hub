@@ -69,14 +69,39 @@
                 </div>
                 
                 <!-- PDF Iframe -->
-                <div class="card-body p-0" style="min-height: 80vh;">
+                <div class="card-body p-0 position-relative" style="min-height: 80vh; background: #f8fafc;">
                     {% if note.file.url %}
+                    <!-- Loading Spinner -->
+                    <div id="viewer-loader" class="position-absolute top-50 start-50 translate-middle text-center" style="z-index: 0;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-dark small">Preparing document...</p>
+                    </div>
+
                     <iframe 
                         src="{{ note.file.url }}#toolbar=1" 
                         id="pdf-viewer"
-                        style="width: 100%; height: 80vh; border: none; background: white;" 
-                        allow="fullscreen">
+                        style="width: 100%; height: 80vh; border: none; position: relative; z-index: 1;" 
+                        allow="fullscreen"
+                        onload="document.getElementById('viewer-loader').style.display='none';">
+                        <p>Your browser does not support iframes. <a href="{{ note.file.url }}">Download PDF</a></p>
                     </iframe>
+
+                    <!-- Smart Fallback for Mobile (Hidden by default, shown if needed) -->
+                    <div id="mobile-fallback" class="d-none p-4 text-center h-100 flex-column justify-content-center bg-white text-dark">
+                        <i class="bi bi-phone-vibrate display-4 mb-3 text-info"></i>
+                        <h5>Mobile Preview Notice</h5>
+                        <p class="small text-muted mb-4">Some mobile browsers can't render large PDFs inside a web page. For the best experience, use our direct viewer or download to your device.</p>
+                        <div class="d-grid gap-2">
+                            <a href="https://docs.google.com/viewer?url={{ note.file.url|urlencode }}&embedded=true" target="_blank" class="btn btn-info text-white">
+                                <i class="bi bi-google me-2"></i> Open in Google Viewer
+                            </a>
+                            <a href="{{ note.file.url }}" class="btn btn-primary">
+                                <i class="bi bi-download me-2"></i> Download PDF
+                            </a>
+                        </div>
+                    </div>
                     {% else %}
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
                         <i class="bi bi-exclamation-octagon display-1 text-danger mb-3"></i>
@@ -131,5 +156,24 @@
             iframe.msRequestFullscreen();
         }
     }
+
+    // Auto-detect mobile devices to offer optimized preview
+    document.addEventListener('DOMContentLoaded', function() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const iframe = document.getElementById('pdf-viewer');
+        const fallback = document.getElementById('mobile-fallback');
+        const loader = document.getElementById('viewer-loader');
+        
+        if (isMobile && window.innerWidth < 768) {
+            // Show mobile warning/optimized options after a short delay if iframe is slow
+            setTimeout(() => {
+                if (loader.style.display !== 'none') {
+                    iframe.classList.add('d-none');
+                    fallback.classList.replace('d-none', 'd-flex');
+                    loader.style.display = 'none';
+                }
+            }, 5000); 
+        }
+    });
 </script>
 {% endblock %}
