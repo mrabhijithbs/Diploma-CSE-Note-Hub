@@ -1,0 +1,135 @@
+{% extends "notes/base.html" %}
+
+{% block title %}{{ note.title }} - Viewer | DiplomaNote Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb p-3 rounded shadow-sm border">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none"><i class="bi bi-house-door"></i> Hubs</a></li>
+            <li class="breadcrumb-item">
+                {% with note_prog=note.programme|default:note.subject.programme %}
+                <a href="{% url 'programme_detail' note_prog.code %}" class="text-decoration-none">{{ note_prog.code }}</a>
+                {% endwith %}
+            </li>
+            <li class="breadcrumb-item"><a href="{% url 'subject_list' note.subject.programme.code note.subject.semester.number %}" class="text-decoration-none">Semester {{ note.subject.semester.number }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'note_list' note.subject.id %}" class="text-decoration-none">{{ note.subject.name }}</a></li>
+            <li class="breadcrumb-item active text-white opacity-75" aria-current="page">{{ note.title|truncatechars:20 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Sidebar Info -->
+        <div class="col-lg-3">
+            <div class="card shadow-lg border-0 h-100 viewer-sidebar">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3">
+                        <i class="bi bi-file-earmark-pdf-fill display-4"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">{{ note.title }}</h4>
+                    <p class="text-muted small mb-4">Uploaded for {{ note.subject.name }}</p>
+                    
+                    <hr class="border-secondary opacity-25">
+                    
+                    <div class="text-start mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-hdd-fill text-info me-2"></i>
+                            <span class="small">Size: {{ note.get_file_size }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-calendar-check-fill text-success me-2"></i>
+                            <span class="small">Added: {{ note.uploaded_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-badge-fill text-warning me-2"></i>
+                            <span class="small">By: Admin</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ note.file.url }}" class="btn btn-primary btn-lg" download>
+                            <i class="bi bi-cloud-arrow-down-fill me-2"></i> Download File
+                        </a>
+                        <button class="btn btn-outline-light btn-sm mt-2" onclick="toggleFullscreen()">
+                            <i class="bi bi-fullscreen me-1"></i> Fullscreen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Viewer -->
+        <div class="col-lg-9">
+            <div class="card shadow-lg border-0 h-100 overflow-hidden viewer-container">
+                <!-- Viewer Header -->
+                <div class="card-header bg-dark bg-opacity-50 py-3 px-4 d-flex justify-content-between align-items-center border-0">
+                    <span class="fw-bold text-info"><i class="bi bi-eye-fill me-2"></i>Live Preview</span>
+                    <span class="badge bg-secondary opacity-75">PDF Web Viewer</span>
+                </div>
+                
+                <!-- PDF Iframe -->
+                <div class="card-body p-0" style="min-height: 80vh;">
+                    {% if note.file.url %}
+                    <iframe 
+                        src="{{ note.file.url }}#toolbar=1" 
+                        id="pdf-viewer"
+                        style="width: 100%; height: 80vh; border: none; background: white;" 
+                        allow="fullscreen">
+                    </iframe>
+                    {% else %}
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
+                        <i class="bi bi-exclamation-octagon display-1 text-danger mb-3"></i>
+                        <h5>Unable to load document</h5>
+                        <p class="text-muted">The file might be missing or the URL is invalid.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .viewer-sidebar {
+        background: rgba(15, 23, 42, 0.7) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .viewer-container {
+        background: rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .bg-danger-subtle {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.2) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    #pdf-viewer {
+        filter: contrast(1.1); /* Slight boost for better reading */
+    }
+
+    /* Target specific styles for mobile */
+    @media (max-width: 991.98px) {
+        #pdf-viewer {
+            height: 60vh !important;
+        }
+    }
+</style>
+
+<script>
+    function toggleFullscreen() {
+        const iframe = document.getElementById('pdf-viewer');
+        if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+        } else if (iframe.webkitRequestFullscreen) { /* Safari */
+            iframe.webkitRequestFullscreen();
+        } else if (iframe.msRequestFullscreen) { /* IE11 */
+            iframe.msRequestFullscreen();
+        }
+    }
+</script>
+{% endblock %}

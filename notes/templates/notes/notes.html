@@ -46,8 +46,11 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="{{ note.file.url }}" class="btn btn-primary" target="_blank">
-                            <i class="bi bi-eye-fill me-2"></i> View / Download
+                        <a href="{% url 'note_detail' note.id %}" class="btn btn-primary">
+                            <i class="bi bi-eye-fill me-2"></i> View Note
+                        </a>
+                        <a href="{{ note.file.url }}" class="btn btn-outline-light btn-sm mt-1" download>
+                            <i class="bi bi-download me-2"></i> Direct Download
                         </a>
                     </div>
                 </div>

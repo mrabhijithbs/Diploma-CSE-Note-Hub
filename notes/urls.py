@@ -15,6 +15,9 @@ urlpatterns = [
     # 3. Note List View
     path('subject/<int:subject_id>/', views.note_list, name='note_list'),
     
+    # 3.5 Note Detail View (Web PDF Viewer)
+    path('note/<int:note_id>/', views.note_detail, name='note_detail'),
+    
     # 4. Search View
     path('search/', views.search, name='search'),
     

@@ -103,6 +103,14 @@ def note_list(request, subject_id):
         'notes': notes
     })
 
+# 4.5 The Note Detail View (PDF Viewer)
+@login_required
+def note_detail(request, note_id):
+    note = get_object_or_404(Note, id=note_id, is_approved=True)
+    return render(request, 'notes/note_detail.html', {
+        'note': note
+    })
+
 # 5. Dedicated Search View
 @login_required
 def search(request):
