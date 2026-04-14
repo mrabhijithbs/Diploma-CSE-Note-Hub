@@ -16,24 +16,53 @@
         </div>
     </section>
 
-    <div class="row g-4 justify-content-center">
-        {% for programme in programmes %}
-        <div class="col-md-6 col-lg-4 reveal reveal-delay-{{ forloop.counter0 }}">
-            <a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none" aria-label="Go to {{ programme.name }} ({{ programme.code }}) Hub">
-                <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
-                    <span class="display-4 fw-black text-primary opacity-75 mb-3">{{ programme.code }}</span>
-                    <h2 class="h4 fw-bold text-dark mb-2">{{ programme.name }}</h2>
-                    <p class="text-muted small mb-0">Enter the {{ programme.code }} Hub</p>
+            <div class="row g-4 justify-content-center">
+                {% for programme in programmes %}
+                <div class="col-md-6 col-lg-4 reveal reveal-delay-{{ forloop.counter0 }}">
+                    <a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none"
+                        aria-label="Go to {{ programme.name }} ({{ programme.code }}) Hub">
+                        <div class="card h-100 programme-portal-card border-0 p-4 text-center overflow-hidden">
+                            <!-- Premium Background Accent -->
+                            <div class="card-accent-gradient"></div>
+
+                            <!-- Department Icon Mapping -->
+                            <div class="dept-icon-wrapper mb-3">
+                                {% if programme.code == 'DAI' %}
+                                <i class="bi bi-cpu-fill"></i>
+                                {% elif programme.code == 'DCSE' %}
+                                <i class="bi bi-code-slash"></i>
+                                {% elif programme.code == 'DEEE' %}
+                                <i class="bi bi-lightning-charge-fill"></i>
+                                {% elif programme.code == 'DHMCT' %}
+                                <i class="bi bi-cup-hot-fill"></i>
+                                {% elif programme.code == 'DME' %}
+                                <i class="bi bi-gear-wide-connected"></i>
+                                {% else %}
+                                <i class="bi bi-journal-text"></i>
+                                {% endif %}
+                            </div>
+
+                            <div class="programme-content">
+                                <h2 class="programme-acronym text-gradient fw-black mb-1">{{ programme.code }}</h2>
+                                <h3 class="programme-full-name h5 fw-semibold text-dark mb-3">{{ programme.name }}</h3>
+                                
+                                <div class="programme-link-footer d-flex align-items-center justify-content-center text-muted small mt-auto">
+                                    <span>Explore Resources</span>
+                                    <i class="bi bi-arrow-right ms-2 transition-transform"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-            </a>
+                {% empty %}
+                <div class="col-12 text-center text-muted">
+                    <p>No programmes available yet. Please add them in the admin dashboard.</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center text-muted">
-            <p>No programmes available yet. Please add them in the admin dashboard.</p>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+    </main>
+</section>
 
 <style>
     .fw-black {
