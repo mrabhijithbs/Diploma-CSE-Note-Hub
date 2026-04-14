@@ -2,6 +2,9 @@
 
 {% block title %}{{ subject.name }} - Study Materials | DiplomaNote Hub{% endblock %}
 
+{% block og_title %}{{ subject.name }} — Study Materials{% endblock %}
+{% block og_description %}Downloadable PDFs, lecture notes, and exam resources for {{ subject.name }} (Semester {{ subject.semester.number }}) at MGCE {{ subject.programme.code }}.{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <nav aria-label="breadcrumb" class="mb-4">

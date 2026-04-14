@@ -2,6 +2,9 @@
 
 {% block title %}Home - DiplomaNote Hub{% endblock %}
 
+{% block og_title %}Home — DiplomaNote Hub{% endblock %}
+{% block og_description %}Select your Diploma Programme at MGCE Polytechnic to access dedicated resources, lecture notes, and study materials.{% endblock %}
+
 {% block content %}
 <div class="container">
     <section class="text-center py-5 mb-5">
@@ -16,10 +19,10 @@
     <div class="row g-4 justify-content-center">
         {% for programme in programmes %}
         <div class="col-md-6 col-lg-4 reveal reveal-delay-{{ forloop.counter0 }}">
-            <a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none">
+            <a href="{% url 'programme_detail' programme.code %}" class="text-decoration-none" aria-label="Go to {{ programme.name }} ({{ programme.code }}) Hub">
                 <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
                     <span class="display-4 fw-black text-primary opacity-75 mb-3">{{ programme.code }}</span>
-                    <h4 class="fw-bold text-dark mb-2">{{ programme.name }}</h4>
+                    <h2 class="h4 fw-bold text-dark mb-2">{{ programme.name }}</h2>
                     <p class="text-muted small mb-0">Enter the {{ programme.code }} Hub</p>
                 </div>
             </a>

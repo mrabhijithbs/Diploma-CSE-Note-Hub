@@ -2,6 +2,9 @@
 
 {% block title %}{{ note.title }} - Viewer | DiplomaNote Hub{% endblock %}
 
+{% block og_title %}{{ note.title }} — Document Viewer{% endblock %}
+{% block og_description %}View and download academic resources for {{ note.subject.name }}. Study materials for MGCE {{ note.subject.programme.code }} students.{% endblock %}
+
 {% block content %}
 <div class="container-fluid px-lg-5">
     <!-- Breadcrumb -->

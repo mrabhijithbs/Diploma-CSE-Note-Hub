@@ -1,6 +1,9 @@
 {% extends "notes/base.html" %}
 
-{% block title %}{{ programme.code }} Home - DiplomaNote Hub{% endblock %}
+{% block title %}{{ programme.code }} Hub - DiplomaNote Hub{% endblock %}
+
+{% block og_title %}{{ programme.code }} Hub — {{ programme.name }}{% endblock %}
+{% block og_description %}Get all study notes, previous year question papers, and academic resources for {{ programme.name }} ({{ programme.code }}) at MGCE Polytechnic.{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -38,7 +41,7 @@
                     <a href="{% url 'subject_list' programme.code sem %}" class="text-decoration-none">
                         <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
                             <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <h3 class="h4 fw-bold text-dark mb-1">Semester</h3>
                             <p class="text-muted small mb-0">View all 1st Year subjects</p>
                         </div>
                     </a>
@@ -61,7 +64,7 @@
                     <a href="{% url 'subject_list' programme.code sem %}" class="text-decoration-none">
                         <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
                             <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <h3 class="h4 fw-bold text-dark mb-1">Semester</h3>
                             <p class="text-muted small mb-0">View core technical subjects</p>
                         </div>
                     </a>
@@ -84,7 +87,7 @@
                     <a href="{% url 'subject_list' programme.code sem %}" class="text-decoration-none">
                         <div class="card h-100 border-0 shadow-sm sem-card p-4 text-center">
                             <span class="display-3 fw-black text-primary opacity-75 mb-2">{{ sem }}</span>
-                            <h4 class="fw-bold text-dark mb-1">Semester</h4>
+                            <h3 class="h4 fw-bold text-dark mb-1">Semester</h3>
                             <p class="text-muted small mb-0">Advanced modules & project resources</p>
                         </div>
                     </a>
