@@ -108,7 +108,7 @@
             object-fit: cover;
             filter: brightness(0.4);
             /* Darkens video for readability */
-            display: none; /* Hidden by default, shown by JS on desktop */
+            display: block;
         }
 
         /* LAYOUT OVERLAY / GLASSMORPHISM THEME */
@@ -651,7 +651,7 @@
 <body class="d-flex flex-column min-vh-100">
 
     <div class="video-bg-container">
-        <video muted loop playsinline preload="none" class="video-bg" poster="{% static 'background.jpg' %}">
+        <video autoplay muted loop playsinline preload="auto" class="video-bg" poster="{% static 'background.jpg' %}">
             <source src="/DNA.mp4" type="video/mp4" id="bgVideoSource" data-dark-src="/DNA.mp4"
                 data-light-src="/W-DNA.mp4">
             <track kind="captions" src="" label="No captions" default>
@@ -891,10 +891,8 @@
                 if (videoBg) videoBg.src = videoBg.getAttribute('data-light-src');
             }
 
-            // Only load and play video on desktop devices (Performance & Mobile Fix)
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            if (!isMobile && videoElement) {
-                videoElement.style.display = 'block';
+            // Load and play video on all devices as requested
+            if (videoElement) {
                 videoElement.load();
                 videoElement.play().catch(e => console.warn("Autoplay blocked:", e));
             }
