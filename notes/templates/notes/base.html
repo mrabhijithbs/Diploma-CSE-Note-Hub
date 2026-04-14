@@ -25,14 +25,14 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:title" content="{% block og_title %}{% block title %}{% endblock %}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}DiplomaNote Hub{% endblock %}">
     <meta property="og:description" content="{% block og_description %}DiplomaNote Hub — Access study notes, lecture materials, and resources at MGCE Polytechnic.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'icon-512x512.png' %}{% endblock %}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
-    <meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}DiplomaNote Hub{% endblock %}">
     <meta property="twitter:description" content="{% block twitter_description %}Access diploma study notes and resources at MGCE Polytechnic.{% endblock %}">
     <meta property="twitter:image" content="{% static 'icon-512x512.png' %}">
 
